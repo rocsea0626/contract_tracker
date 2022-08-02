@@ -11,6 +11,20 @@ Globals:
     Timeout: 3
 
 Resources:
+  CreateEquipment:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/create-equipment/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /equipment
+            Method: post
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
