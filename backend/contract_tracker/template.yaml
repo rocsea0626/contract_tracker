@@ -11,6 +11,20 @@ Globals:
     Timeout: 3
 
 Resources:
+  GetEquipment:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/get-equipment/
+      Handler: app.lambdaHandler
+      Runtime: nodejs12.x
+      Architectures:
+        - x86_64
+      Events:
+        GetEquipment:
+          Type: Api
+          Properties:
+            Path: /equipment
+            Method: get
   CreateEquipment:
     Type: AWS::Serverless::Function
     Properties:
@@ -20,7 +34,7 @@ Resources:
       Architectures:
         - x86_64
       Events:
-        HelloWorld:
+        CreateEquipment:
           Type: Api
           Properties:
             Path: /equipment
