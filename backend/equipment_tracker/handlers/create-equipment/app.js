@@ -1,10 +1,6 @@
 // const axios = require('axios')
 // const url = 'http://checkip.amazonaws.com/';
-const AWS = require('aws-sdk');
-const dbClient = new AWS.DynamoDB.DocumentClient({
-    region: "localhost",
-    endpoint: "http://localhost:8000",
-});
+const utils  = require(process.env.AWS ? '/opt/nodejs/utils' : '../../layers/nodejs/utils');
 
 let response;
 
@@ -23,7 +19,7 @@ exports.lambdaHandler = async (event, context) => {
             TableName: process.env.DB_NAME,
             ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
         }
-        const result = await dbClient.put(dbPutParams).promise()
+        const result = await utils.getDynamodbClient().put(dbPutParams).promise()
         console.log("result: %s", result)
         response = {
             'statusCode': 200,
