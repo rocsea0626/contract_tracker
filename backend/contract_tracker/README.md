@@ -15,6 +15,19 @@ The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI
 * [IntelliJ](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
 * [WebStorm](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
 * [VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html)
+* 
+## Develop application locally with DynamoDB local
+- Run the DynamoDB local in a docker container at port 8000
+  - `docker run -p 8000:8000 amazon/dynamodb-local`
+- List the tables on DynamoDB Local by executing
+  - `aws dynamodb list-tables --endpoint-url http://localhost:8000`
+- Create the PersonTable by executing
+  - `aws dynamodb create-table --cli-input-json file://json/create-person-table.json --endpoint-url http://localhost:8000`
+- Delete the PersonTable by executing
+  - `aws dynamodb delete-table --table-name PersonTable --endpoint-url http://localhost:8000`
+- Start the local API Gateway instance by executing
+  - `sam local start-api --env-vars json/env.json`
+
 
 ## Deploy the sample application
 
