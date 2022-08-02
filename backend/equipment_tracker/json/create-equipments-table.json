@@ -1,0 +1,13 @@
+{
+    "TableName": "EquipmentsTable",
+    "KeySchema": [
+      { "AttributeName": "EquipmentNumber", "KeyType": "HASH" }
+    ],
+    "AttributeDefinitions": [
+      { "AttributeName": "EquipmentNumber", "AttributeType": "S" }
+    ],
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 5,
+      "WriteCapacityUnits": 1
+    }
+}

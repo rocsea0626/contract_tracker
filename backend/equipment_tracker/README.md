@@ -17,14 +17,16 @@ The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI
 * [VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html)
 * 
 ## Develop application locally with DynamoDB local
+- Change dicrecotry to `backend/contract_tracker`
+  - `cd backend/contract_tracker`
 - Run the DynamoDB local in a docker container at port 8000
-  - `docker run -p 8000:8000 amazon/dynamodb-local`
+  - `docker compose --file docker-compose.yaml up`
 - List the tables on DynamoDB Local by executing
   - `aws dynamodb list-tables --endpoint-url http://localhost:8000`
 - Create the PersonTable by executing
-  - `aws dynamodb create-table --cli-input-json file://json/create-person-table.json --endpoint-url http://localhost:8000`
+  - `aws dynamodb create-table --cli-input-json file://json/create-equipments-table.json --endpoint-url http://localhost:8000`
 - Delete the PersonTable by executing
-  - `aws dynamodb delete-table --table-name PersonTable --endpoint-url http://localhost:8000`
+  - `aws dynamodb delete-table --table-name EquipmentsTable --endpoint-url http://localhost:8000`
 - Start the local API Gateway instance by executing
   - `sam local start-api --env-vars json/env.json`
 
@@ -134,3 +136,7 @@ aws cloudformation delete-stack --stack-name contract_tracker
 See the [AWS SAM developer guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for an introduction to SAM specification, the SAM CLI, and serverless application concepts.
 
 Next, you can use AWS Serverless Application Repository to deploy ready to use Apps that go beyond hello world samples and learn how authors developed their applications: [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/)
+
+## Trouble shooting
+- **Error building docker image**: *pull access denied for public.ecr.aws/sam/xxx, repository does not exist or may require 'docker login': denied: Your authorization token has expired*
+  - https://docs.aws.amazon.com/AmazonECR/latest/public/public-troubleshooting.html
