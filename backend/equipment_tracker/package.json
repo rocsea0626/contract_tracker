@@ -10,7 +10,7 @@
     "axios": "^0.21.1"
   },
   "scripts": {
-    "test": "mocha handlers/*/tests/unit/",
+    "test": "env DB_NAME=EquipmentsTable mocha handlers/*/tests/unit/ ",
     "integ-test": "mocha tests/integration/"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-# Contract Tracker
+# Equipment Tracker
 
 AWS Serverless application to track contracts
 

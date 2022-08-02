@@ -12,7 +12,7 @@ describe('Tests get equipment, ~/equipment (GET)', function () {
 
         const jsonResp = JSON.parse(resp.body)
         expect(jsonResp).to.be.an('object')
-        expect(jsonResp.equipmentNumber).to.be.equal("en_12345")
-        expect(jsonResp.startDate).to.be.equal("mock_start_date")
+        expect(jsonResp.EquipmentNumber).to.be.equal("en_12345")
+        expect(jsonResp.StartDate).to.be.equal("mock_start_date")
     });
 });

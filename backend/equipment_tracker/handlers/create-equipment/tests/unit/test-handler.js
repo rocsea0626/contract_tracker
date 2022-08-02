@@ -8,11 +8,11 @@ describe('Tests create equipment, ~/equipment (POST)', function () {
     it('return 201, creation succeeds', async () => {
         const event = {
             body: {
-                equipmentNumber: "en_12345",
-                address: "mock_address",
-                startDate: "mock_start_date",
-                endDate: "mock_end_date",
-                status: "running",
+                EquipmentNumber: "en_12345",
+                Address: "mock_address",
+                StartDate: "mock_start_date",
+                EndDate: "mock_end_date",
+                Status: "running",
             }
         }
         const resp = await app.lambdaHandler(event, {})
@@ -21,7 +21,7 @@ describe('Tests create equipment, ~/equipment (POST)', function () {
 
         const jsonResp = JSON.parse(resp.body)
         expect(jsonResp).to.be.an('object')
-        expect(jsonResp.equipmentNumber).to.be.equal("en_12345")
-        expect(jsonResp.startDate).to.be.equal("mock_start_date")
+        expect(jsonResp.EquipmentNumber).to.be.equal("en_12345")
+        expect(jsonResp.StartDate).to.be.equal("mock_start_date")
     });
 });
