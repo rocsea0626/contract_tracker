@@ -1,28 +1,19 @@
 // const axios = require('axios')
 // const url = 'http://checkip.amazonaws.com/';
 const utils  = require(process.env.AWS ? '/opt/nodejs/utils' : '../../layers/nodejs/utils');
-
 let response;
 
 exports.lambdaHandler = async (event, context) => {
     try {
         console.log("process.env.DB_NAME: %s", process.env.DB_NAME)
-        // console.log("event.body, %s", event.body);
-        const dbPutParams = {
-            Item: {
-                "EquipmentNumber": event.body.EquipmentNumber,
-                "Address": event.body.Address,
-                "StartDate": event.body.StartDate,
-                "EndDate": event.body.EndDate,
-                "Status": event.body.Status
-            },
-            TableName: process.env.DB_NAME,
-            ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
+        const isValidRequest = utils.validateRequest(event)
+        if(!isValidRequest){
+            throw Error("invalid request")
         }
-        const result = await utils.getDynamodbClient().put(dbPutParams).promise()
+        const result = await utils.createEquipment(event).promise()
         console.log("result: %s", result)
         response = {
-            'statusCode': 200,
+            'statusCode': 201,
             'body': JSON.stringify(event.body)
         }
     } catch (err) {

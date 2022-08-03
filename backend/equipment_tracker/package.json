@@ -10,12 +10,14 @@
     "axios": "^0.21.1"
   },
   "scripts": {
-    "test": "env DB_NAME=EquipmentsTable mocha handlers/*/tests/unit/ ",
+    "test": "env DB_NAME=EquipmentsTable mocha handlers/*/tests/unit/ layers/nodejs/",
     "integ-test": "mocha tests/integration/"
   },
   "devDependencies": {
     "aws-sdk": "^2.815.0",
+    "aws-sdk-mock": "^5.7.0",
     "chai": "^4.2.0",
-    "mocha": "^9.1.4"
+    "mocha": "^9.1.4",
+    "sinon": "^14.0.0"
   }
 }
