@@ -14,20 +14,23 @@ const getDocumentClient = () => {
     return new AWS.DynamoDB.DocumentClient()
 }
 
-exports.createEquipment = async (event) => {
+exports.createEquipment = async (equipment) => {
+    // console.log("createEquipment(), equipment: %s", JSON.stringify(equipment))
+
     const params = {
         Item: {
-            "EquipmentNumber": event.body.EquipmentNumber,
-            "Address": event.body.Address,
-            "StartDate": event.body.StartDate,
-            "EndDate": event.body.EndDate,
-            "Status": event.body.Status
+            "EquipmentNumber": equipment.EquipmentNumber,
+            "Address": equipment.Address,
+            "StartDate": equipment.StartDate,
+            "EndDate": equipment.EndDate,
+            "Status": equipment.Status
         },
         TableName: process.env.DB_NAME,
         ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
     }
+    // console.log("createEquipment(), params: %s", JSON.stringify(params))
     const result = await getDocumentClient().put(params).promise()
-    console.log("createEquipment(), result: %s", result)
+    // console.log("createEquipment(), result: %s", result)
 
     return result
 }
@@ -52,16 +55,6 @@ exports.getEquipments = async (limit) => {
     const result = await getDocumentClient().scan(params).promise()
     console.log("getEquipments(), result: %s", JSON.stringify(result))
     return result
-}
-
-exports.validateRequest = (event) => {
-    console.log("validateRequest(event.body: %s)", event.body)
-    if (!event.body.EquipmentNumber || !event.body.Address || !event.body.StartDate || !event.body.EndDate || !event.body.Status){
-        return false
-    }
-    if(event.body.Status !== 'Running' && event.body.Status !== 'Stopped')
-        return false
-    return true
 }
 
 exports.createTable = async () => {

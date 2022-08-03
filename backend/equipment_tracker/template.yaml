@@ -28,7 +28,7 @@ Resources:
         GetEquipment:
           Type: Api
           Properties:
-            Path: /equipment
+            Path: /equipment/{equipment_number}
             Method: get
 
   CreateEquipment:
