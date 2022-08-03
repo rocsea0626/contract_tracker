@@ -1,5 +1,6 @@
 // const axios = require('axios')
 // const url = 'http://checkip.amazonaws.com/';
+const db  = require(process.env.AWS ? '/opt/nodejs/db' : '../../layers/nodejs/db/dynamodb');
 const utils  = require(process.env.AWS ? '/opt/nodejs/utils' : '../../layers/nodejs/utils/utils');
 let response;
 
@@ -13,7 +14,7 @@ exports.lambdaHandler = async (event, context) => {
                 'body': 'invalid request'
             }
         }
-        const result = await utils.createEquipment(event).promise()
+        const result = await db.createEquipment(event).promise()
         console.log("result: %s", result)
         response = {
             'statusCode': 201,

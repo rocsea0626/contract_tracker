@@ -1,7 +1,7 @@
 'use strict';
 
 const app = require('../../app.js')
-const utils = require('../../../../layers/nodejs/utils/utils')
+const db = require('../../../../layers/nodejs/db/dynamodb')
 const chai = require('chai');
 const expect = chai.expect;
 const sinon = require("sinon")
@@ -9,7 +9,7 @@ const sandbox = sinon.createSandbox()
 
 describe('Tests create equipment, ~/equipment (POST)', function () {
     it('Succesful, return 201, creation succeeds', async () => {
-        sandbox.stub(utils, 'createEquipment').returns({promise: () => {{}}});
+        sandbox.stub(db, 'createEquipment').returns({promise: () => {{}}});
         const event = {
             body: {
                 EquipmentNumber: "en_12345",
