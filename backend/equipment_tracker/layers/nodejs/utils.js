@@ -54,6 +54,16 @@ exports.getEquipments = async (limit) => {
     return result
 }
 
+exports.validateRequest = (event) => {
+    const {EquipmentNumber, Address, StartDate, EndDate, Status} = event.body
+    if (!EquipmentNumber || !Address || !StartDate || !EndDate || !Status){
+        return false
+    }
+    if(Status !== 'Running' && Status !== 'Stopped')
+        return false
+    return true
+}
+
 exports.createTable = async () => {
     const params = {
         TableName: process.env.DB_NAME,

@@ -20,7 +20,7 @@ describe('Tests utils functions', function () {
                     Address: "mock_address",
                     StartDate: "mock_start_date",
                     EndDate: "mock_end_date",
-                    Status: "running",
+                    Status: "Running",
                 }
             }
             const resp = await utils.createEquipment(event)
@@ -34,7 +34,7 @@ describe('Tests utils functions', function () {
                     Address: "mock_address",
                     StartDate: "mock_start_date",
                     EndDate: "mock_end_date",
-                    Status: "running",
+                    Status: "Running",
                 }
             }
             const resp = await utils.createEquipment(event)
@@ -55,7 +55,7 @@ describe('Tests utils functions', function () {
                         Address: "mock_address",
                         StartDate: "mock_start_date",
                         EndDate: "mock_end_date",
-                        Status: "running",
+                        Status: "Running",
                     }
                 }
                 await utils.createEquipment(event)
@@ -81,7 +81,7 @@ describe('Tests utils functions', function () {
                     Address: "mock_address",
                     StartDate: "mock_start_date",
                     EndDate: "mock_end_date",
-                    Status: "running",
+                    Status: "Running",
                 }
             }
             const resp = await utils.createEquipment(event)
@@ -113,7 +113,7 @@ describe('Tests utils functions', function () {
                     Address: "mock_address",
                     StartDate: "mock_start_date",
                     EndDate: "mock_end_date",
-                    Status: "running",
+                    Status: "Running",
                 }
             }
 
@@ -133,7 +133,7 @@ describe('Tests utils functions', function () {
                     Address: "mock_address_2",
                     StartDate: "mock_start_date_2",
                     EndDate: "mock_end_date_2",
-                    Status: "running",
+                    Status: "Running",
                 }
             }
 
@@ -149,6 +149,96 @@ describe('Tests utils functions', function () {
             expect(result.Count).to.equal(2)
             expect(result.Items[0].EquipmentNumber).to.equal("en_34567")
             expect(result.Items[1].EquipmentNumber).to.equal("en_23456")
+        })
+    })
+
+    describe('Test validateRequest()', ()=>{
+        it('Successful', async () => {
+            const event = {
+                body: {
+                    EquipmentNumber: "en_12345",
+                    Address: "mock_address",
+                    StartDate: "mock_start_date",
+                    EndDate: "mock_end_date",
+                    Status: "Stopped",
+                }
+            }
+
+            const isValid = await utils.validateRequest(event)
+            expect(isValid).to.equal(true)
+
+            const event1 = {
+                body: {
+                    EquipmentNumber: "en_12345",
+                    Address: "mock_address",
+                    StartDate: "mock_start_date",
+                    EndDate: "mock_end_date",
+                    Status: "Running",
+                }
+            }
+
+            const isValid1 = await utils.validateRequest(event1)
+            expect(isValid1).to.equal(true)
+        })
+
+        it('Failed, missing attribute: \"Address\"', async () => {
+            const event = {
+                body: {
+                    EquipmentNumber: "en_12345",
+                    Address: undefined,
+                    StartDate: "mock_start_date",
+                    EndDate: "mock_end_date",
+                    Status: "Running",
+                }
+            }
+
+            const isValid = await utils.validateRequest(event)
+            expect(isValid).to.equal(false)
+        })
+
+        it('Failed, attribute: \"StartDate\" === null', async () => {
+            const event = {
+                body: {
+                    EquipmentNumber: "en_12345",
+                    Address: "mock_address",
+                    StartDate: null,
+                    EndDate: "mock_end_date",
+                    Status: "Running",
+                }
+            }
+
+            const isValid = await utils.validateRequest(event)
+            expect(isValid).to.equal(false)
+        })
+
+        it('Failed, attribute: \"StartDate\" === \"\"', async () => {
+            const event = {
+                body: {
+                    EquipmentNumber: "en_12345",
+                    Address: "mock_address",
+                    StartDate: "",
+                    EndDate: "mock_end_date",
+                    Status: "Running",
+                }
+            }
+
+            const isValid = await utils.validateRequest(event)
+            expect(isValid).to.equal(false)
+        })
+
+        it('Failed, attribute: \"Status\" has invalid value', async () => {
+            const event = {
+                body: {
+                    EquipmentNumber: "en_12345",
+                    Address: "mock_address",
+                    StartDate: "",
+                    EndDate: "mock_end_date",
+                    Status: "running",
+                }
+            }
+
+            const isValid = await utils.validateRequest(event)
+            expect(isValid).to.equal(false)
         })
     })
 });
