@@ -1,6 +1,6 @@
 // const axios = require('axios')
 // const url = 'http://checkip.amazonaws.com/';
-const utils  = require(process.env.AWS ? '/opt/nodejs/utils' : '../../layers/nodejs/utils');
+const utils  = require(process.env.AWS ? '/opt/nodejs/utils' : '../../layers/nodejs/utils/utils');
 let response;
 
 exports.lambdaHandler = async (event, context) => {
@@ -8,7 +8,10 @@ exports.lambdaHandler = async (event, context) => {
         console.log("process.env.DB_NAME: %s", process.env.DB_NAME)
         const isValidRequest = utils.validateRequest(event)
         if(!isValidRequest){
-            throw Error("invalid request")
+            return {
+                'statusCode': 400,
+                'body': 'invalid request'
+            }
         }
         const result = await utils.createEquipment(event).promise()
         console.log("result: %s", result)

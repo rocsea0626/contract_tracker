@@ -181,6 +181,15 @@ describe('Tests utils functions', function () {
             expect(isValid1).to.equal(true)
         })
 
+        it('Failed, body is empty', async () => {
+            const event = {
+                body: {}
+            }
+
+            const isValid = await utils.validateRequest(event)
+            expect(isValid).to.equal(false)
+        })
+
         it('Failed, missing attribute: \"Address\"', async () => {
             const event = {
                 body: {
