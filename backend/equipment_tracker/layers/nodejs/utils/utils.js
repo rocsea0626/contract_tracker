@@ -11,7 +11,7 @@ const getDocumentClient = () => {
             endpoint: "http://localhost:8000",
         })
     }
-    return null
+    return new AWS.DynamoDB.DocumentClient()
 }
 
 exports.createEquipment = async (event) => {

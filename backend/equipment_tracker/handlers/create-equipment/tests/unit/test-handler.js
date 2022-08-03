@@ -1,7 +1,7 @@
 'use strict';
 
 const app = require('../../app.js');
-const utils = require('../../../../layers/nodejs/utils');
+const utils = require('../../../../layers/nodejs/utils/utils');
 const chai = require('chai');
 const expect = chai.expect;
 const sinon = require("sinon")
