@@ -55,11 +55,11 @@ exports.getEquipments = async (limit) => {
 }
 
 exports.validateRequest = (event) => {
-    const {EquipmentNumber, Address, StartDate, EndDate, Status} = event.body
-    if (!EquipmentNumber || !Address || !StartDate || !EndDate || !Status){
+    console.log("validateRequest(event.body: %s)", event.body)
+    if (!event.body.EquipmentNumber || !event.body.Address || !event.body.StartDate || !event.body.EndDate || !event.body.Status){
         return false
     }
-    if(Status !== 'Running' && Status !== 'Stopped')
+    if(event.body.Status !== 'Running' && event.body.Status !== 'Stopped')
         return false
     return true
 }

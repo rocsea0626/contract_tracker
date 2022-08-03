@@ -1,14 +1,14 @@
 'use strict';
 
-const app = require('../../app.js');
-const utils = require('../../../../layers/nodejs/utils/utils');
+const app = require('../../app.js')
+const utils = require('../../../../layers/nodejs/utils/utils')
 const chai = require('chai');
 const expect = chai.expect;
 const sinon = require("sinon")
 const sandbox = sinon.createSandbox()
 
 describe('Tests create equipment, ~/equipment (POST)', function () {
-    it('return 201, creation succeeds', async () => {
+    it('Succesful, return 201, creation succeeds', async () => {
         sandbox.stub(utils, 'createEquipment').returns({promise: () => {{}}});
         const event = {
             body: {
@@ -29,5 +29,15 @@ describe('Tests create equipment, ~/equipment (POST)', function () {
         expect(jsonResp.StartDate).to.be.equal("mock_start_date")
 
         sandbox.restore();
+    });
+
+    it('Failed, return 400, bad request', async () => {
+        const event = {
+            body: {}
+        }
+        const resp = await app.lambdaHandler(event, {})
+        console.log("resp: %s", JSON.stringify(resp))
+        expect(resp).to.be.an('object')
+        expect(resp.statusCode).to.equal(400)
     });
 });
