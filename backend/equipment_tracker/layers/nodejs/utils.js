@@ -15,7 +15,7 @@ const getDynamodbClient = () => {
 }
 
 exports.createEquipment = async (event) => {
-    const dbPutParams = {
+    const params = {
         Item: {
             "EquipmentNumber": event.body.EquipmentNumber,
             "Address": event.body.Address,
@@ -26,9 +26,31 @@ exports.createEquipment = async (event) => {
         TableName: process.env.DB_NAME,
         ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
     }
-    const result = await getDynamodbClient().put(dbPutParams).promise()
+    const result = await getDynamodbClient().put(params).promise()
     console.log("createEquipment(), result: %s", result)
 
+    return result
+}
+
+exports.getEquipmentByNumber = async (equipmentNumber) => {
+    const params = {
+        TableName : process.env.DB_NAME,
+        Key: {
+            'EquipmentNumber': equipmentNumber
+        }
+    }
+    const result = await getDynamodbClient().get(params).promise()
+    console.log("getEquipmentByNumber(), result: %s", JSON.stringify(result))
+    return result
+}
+
+exports.getEquipments = async (limit) => {
+    const params = {
+        TableName : process.env.DB_NAME,
+        Limit: limit
+    }
+    const result = await getDynamodbClient().scan(params).promise()
+    console.log("getEquipments(), result: %s", JSON.stringify(result))
     return result
 }
 
@@ -47,7 +69,7 @@ exports.createTable = async () => {
         }
     }
     const result = await dynamoDB.createTable(params).promise()
-    console.log("createTable(), result: %s", JSON.stringify(result))
+    // console.log("createTable(), result: %s", JSON.stringify(result))
     return result
 }
 
@@ -56,6 +78,6 @@ exports.deleteTable = async () => {
         TableName: process.env.DB_NAME,
     }
     const result = await dynamoDB.deleteTable(params).promise()
-    console.log("deleteTable(), result: %s", JSON.stringify(result))
+    // console.log("deleteTable(), result: %s", JSON.stringify(result))
     return result
 }
