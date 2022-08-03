@@ -140,3 +140,8 @@ Next, you can use AWS Serverless Application Repository to deploy ready to use A
 ## Trouble shooting
 - **Error building docker image**: *pull access denied for public.ecr.aws/sam/xxx, repository does not exist or may require 'docker login': denied: Your authorization token has expired*
   - https://docs.aws.amazon.com/AmazonECR/latest/public/public-troubleshooting.html
+
+## To read
+- error handling in lambda
+- Dynamodb table design
+  - https://aws.amazon.com/blogs/compute/creating-a-single-table-design-with-amazon-dynamodb/

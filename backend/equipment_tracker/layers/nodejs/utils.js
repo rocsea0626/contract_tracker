@@ -4,7 +4,7 @@ const dynamoDB = new AWS.DynamoDB({
     endpoint: "http://localhost:8000",
 })
 
-const getDynamodbClient = () => {
+const getDocumentClient = () => {
     if(!process.env.AWS){
         return new AWS.DynamoDB.DocumentClient({
             region: "localhost",
@@ -26,7 +26,7 @@ exports.createEquipment = async (event) => {
         TableName: process.env.DB_NAME,
         ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
     }
-    const result = await getDynamodbClient().put(params).promise()
+    const result = await getDocumentClient().put(params).promise()
     console.log("createEquipment(), result: %s", result)
 
     return result
@@ -39,7 +39,7 @@ exports.getEquipmentByNumber = async (equipmentNumber) => {
             'EquipmentNumber': equipmentNumber
         }
     }
-    const result = await getDynamodbClient().get(params).promise()
+    const result = await getDocumentClient().get(params).promise()
     console.log("getEquipmentByNumber(), result: %s", JSON.stringify(result))
     return result
 }
@@ -49,7 +49,7 @@ exports.getEquipments = async (limit) => {
         TableName : process.env.DB_NAME,
         Limit: limit
     }
-    const result = await getDynamodbClient().scan(params).promise()
+    const result = await getDocumentClient().scan(params).promise()
     console.log("getEquipments(), result: %s", JSON.stringify(result))
     return result
 }

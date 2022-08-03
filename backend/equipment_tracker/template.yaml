@@ -9,6 +9,9 @@ Description: >
 Globals:
   Function:
     Timeout: 3
+    Environment:
+      Variables:
+        DYNAMO_TABLE_NAME: !Ref EquipmentsTable
 
 Resources:
   CommonLayer:
@@ -69,6 +72,21 @@ Resources:
             Path: /hello
             Method: get
 
+  EquipmentsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: EquipmentsTable
+      AttributeDefinitions:
+        - AttributeName: EquipmentNumber
+          AttributeType: S
+      KeySchema:
+        - AttributeName: EquipmentNumber
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 1
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
@@ -82,3 +100,24 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt HelloWorldFunctionRole.Arn
+  CommonLayer:
+    Description: "CommonLayer Function ARN"
+      Value: !GetAtt CommonLayer.Arn
+  CommonLayerIamRole:
+    Description: "Implicit IAM Role created for CommonLayer function"
+    Value: !GetAtt CommonLayerRole.Arn
+  GetEquipment:
+    Description: "GetEquipment Function ARN"
+      Value: !GetAtt GetEquipment.Arn
+  GetEquipmentIamRole:
+    Description: "Implicit IAM Role created for GetEquipment function"
+    Value: !GetAtt GetEquipmentRole.Arn
+  CreateEquipment:
+    Description: "CreateEquipment Function ARN"
+      Value: !GetAtt CreateEquipment.Arn
+  CreateEquipmentIamRole:
+    Description: "Implicit IAM Role created for CreateEquipment function"
+    Value: !GetAtt CreateEquipmentRole.Arn
+  EquipmentsTableName:
+    Description: "Name of created database table"
+    Value: !Select [ 1, !Split [ '/', !GetAtt EquipmentsTable.Arn ] ]
