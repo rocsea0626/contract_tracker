@@ -28,7 +28,7 @@ Resources:
         GetEquipment:
           Type: Api
           Properties:
-            Path: /equipment/{equipment_number}
+            Path: /equipment/{equipmentNumber}
             Method: get
       Policies:
         - DynamoDBReadPolicy:
@@ -42,10 +42,10 @@ Resources:
         GetEquipment:
           Type: Api
           Properties:
-            Path: /equipment/{equipment_number}
+            Path: /equipment/{equipmentNumber}
             Method: delete
       Policies:
-        - DynamoDBWritePolicy:
+        - DynamoDBCrudPolicy:
             TableName: !Ref EquipmentsTable
 
   CreateEquipment:

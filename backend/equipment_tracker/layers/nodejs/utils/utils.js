@@ -12,7 +12,7 @@ exports.getDynamodbTableName = () => {
 }
 
 exports.parseRequest = (event) => {
-    // console.log("parseRequest(event.body: %s)", event.body)
+    console.log("parseRequest(event.body: %s)", event.body)
     const equipment = JSON.parse(event.body)
     // console.log("parseRequest(equipment: %s)", equipment)
     if (!equipment || !equipment.EquipmentNumber ||

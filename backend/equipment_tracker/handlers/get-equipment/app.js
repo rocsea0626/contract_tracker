@@ -5,8 +5,9 @@ const utils  = require(process.env.AWS_EXECUTION_ENV ? '/opt/utils/utils' : '../
  * (GET) ~/equipment/{equipmentNumber}
  */
 exports.lambdaHandler = async (event, context) => {
+    console.log("event.pathParameters: %s", JSON.stringify(event.pathParameters))
     try {
-        const {equipmentNumber} = event.pathParameters
+        const equipmentNumber = event.pathParameters.equipmentNumber
         if(!equipmentNumber){
             const error = new Error(`invalid request, equipmentNumber: ${equipmentNumber}`)
             console.error(error)

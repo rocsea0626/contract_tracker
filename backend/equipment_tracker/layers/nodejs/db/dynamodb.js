@@ -18,6 +18,7 @@ const getDocumentClient = () => {
 }
 
 exports.createEquipment = async (equipment) => {
+    console.log("createEquipment(), equipment: %s", JSON.stringify(equipment))
     const params = {
         Item: {
             "EquipmentNumber": equipment.EquipmentNumber,
