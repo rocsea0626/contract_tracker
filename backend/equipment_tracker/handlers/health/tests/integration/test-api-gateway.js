@@ -24,17 +24,12 @@ const getStackName = () => {
 /**
  * Make sure env variable AWS_SAM_STACK_NAME exists with the name of the stack we are going to test.
  */
-describe("Test API Gateway", function () {
+describe("Test /health", function () {
   let apiEndpoint;
 
-  /**
-   * Based on the provided stack name,
-   * here we use cloudformation API to find out what the HelloWorldApi URL is
-   */
   before(async () => {
     const stackName = getStackName();
-
-    const client = new AWS.CloudFormation();
+    const client = new AWS.CloudFormation({region: 'eu-central-1'});
 
     let response;
     try {
@@ -54,10 +49,10 @@ describe("Test API Gateway", function () {
 
     const stackOutputs = stacks[0].Outputs;
     const apiOutput = stackOutputs.find(
-      (output) => output.OutputKey === "HelloWorldApi"
+      (output) => output.OutputKey === "ApiEndpointUrl"
     );
 
-    expect(apiOutput, `Cannot find output HelloWorldApi in stack ${stackName}`)
+    expect(apiOutput, `Cannot find output ApiEndpointUrl in stack ${stackName}`)
       .not.to.be.undefined;
 
     apiEndpoint = apiOutput.OutputValue;
@@ -66,16 +61,17 @@ describe("Test API Gateway", function () {
   /**
    * Call the API Gateway endpoint and check the response
    */
-  it("verifies successful response from api gateway", (done) => {
-    console.info("api endpoint:", apiEndpoint);
-    https
-      .get(apiEndpoint, (res) => {
+  it("returns 200, ", (done) => {
+      console.log("apiEndpoint: %s", apiEndpoint)
+      https.get(apiEndpoint + 'health', (res) => {
         expect(res.statusCode).to.be.equal(200);
 
         res.on("data", (data) => {
+          console.log("data: %s", data)
           const response = JSON.parse(data);
+
           expect(response).to.be.an("object");
-          expect(response.message).to.be.equal("hello world");
+          expect(response['context.httpMethod']).to.be.equal("GET");
           done();
         });
       })

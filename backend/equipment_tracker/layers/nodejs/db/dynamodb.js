@@ -1,4 +1,7 @@
 const AWS = require('aws-sdk')
+const utils = require('../utils/utils')
+
+
 const dynamoDB = new AWS.DynamoDB({
     region: "localhost",
     endpoint: "http://localhost:8000",
@@ -27,7 +30,7 @@ exports.createEquipment = async (equipment) => {
             "EndDate": equipment.EndDate,
             "Status": equipment.Status
         },
-        TableName: process.env.DB_NAME,
+        TableName: utils.getDynamodbTableName(),
         ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
     }
     // console.log("createEquipment(), params: %s", JSON.stringify(params))
@@ -40,7 +43,7 @@ exports.createEquipment = async (equipment) => {
 exports.getEquipmentByNumber = async (equipmentNumber) => {
     console.log("getEquipmentByNumber(), equipmentNumber: %s", equipmentNumber)
     const params = {
-        TableName : process.env.DB_NAME,
+        TableName : utils.getDynamodbTableName(),
         Key: {
             'EquipmentNumber': equipmentNumber
         }
@@ -53,7 +56,7 @@ exports.getEquipmentByNumber = async (equipmentNumber) => {
 
 exports.getEquipments = async (limit) => {
     const params = {
-        TableName : process.env.DB_NAME,
+        TableName : utils.getDynamodbTableName(),
         Limit: limit
     }
     const result = await getDocumentClient().scan(params).promise()
@@ -63,7 +66,7 @@ exports.getEquipments = async (limit) => {
 
 exports.createTable = async () => {
     const params = {
-        TableName: process.env.DB_NAME,
+        TableName: utils.getDynamodbTableName(),
         KeySchema: [
             { "AttributeName": "EquipmentNumber", "KeyType": "HASH" }
         ],
@@ -82,7 +85,7 @@ exports.createTable = async () => {
 
 exports.deleteTable = async () => {
     const params = {
-        TableName: process.env.DB_NAME,
+        TableName: utils.getDynamodbTableName(),
     }
     const result = await dynamoDB.deleteTable(params).promise()
     // console.log("deleteTable(), result: %s", JSON.stringify(result))

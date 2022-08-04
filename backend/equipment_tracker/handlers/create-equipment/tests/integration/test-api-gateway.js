@@ -1,20 +1,15 @@
-"use strict";
+"use strict"
 
 const chai = require("chai");
 const AWS = require("aws-sdk");
 const https = require("https");
 const expect = chai.expect;
 
-/**
- * Get stack name from environment variable AWS_SAM_STACK_NAME.
- * throw exception if AWS_SAM_STACK_NAME is not set.
- */
 const getStackName = () => {
   const stackName = process.env["AWS_SAM_STACK_NAME"];
   if (!stackName) {
     throw new Error(
-      "Cannot find env var AWS_SAM_STACK_NAME.\n" +
-        "Please setup this environment variable with the stack name where we are running integration tests."
+      "Cannot find env var AWS_SAM_STACK_NAME.\n"
     );
   }
 
@@ -33,9 +28,8 @@ describe("Test API Gateway", function () {
    */
   before(async () => {
     const stackName = getStackName();
-
-    const client = new AWS.CloudFormation();
-
+    const client = new AWS.CloudFormation({region: 'eu-central-1'});
+    console.log("client: %s", JSON.stringify(client))
     let response;
     try {
       response = await client
@@ -45,8 +39,7 @@ describe("Test API Gateway", function () {
         .promise();
     } catch (e) {
       throw new Error(
-        `Cannot find stack ${stackName}: ${e.message}\n` +
-          `Please make sure stack with the name "${stackName}" exists.`
+        `Cannot find stack ${stackName}: ${e.message}`
       );
     }
 

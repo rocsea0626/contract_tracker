@@ -10,7 +10,7 @@ echo "PROJECT_NAME: $PROJECT_NAME"
 echo "STACK_NAME: $STACK_NAME"
 echo "AWS_REGION: $AWS_REGION"
 echo "BUILD_SUFFIX: $BUILD_SUFFIX"
-echo "\n"
+echo ""
 
 echo "List buckets in S3"
 aws s3 ls
@@ -20,7 +20,6 @@ sam build
 
 echo "Packaging stack $STACK_NAME ..."
 aws s3 mb s3://"$PROJECT_NAME" --region "$AWS_REGION" 2>/dev/null
-
 sam package --s3-bucket "$PROJECT_NAME" --s3-prefix "$BUILD_SUFFIX" --output-template-file packaged.yaml
 
 echo "Deploying stack $STACK_NAME ..."
@@ -33,3 +32,6 @@ sam deploy \
   --no-fail-on-empty-changeset \
   --parameter-overrides \
   StackName="$STACK_NAME"
+
+
+

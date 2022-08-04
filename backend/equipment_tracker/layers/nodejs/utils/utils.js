@@ -1,3 +1,23 @@
+exports.getDynamodbTableName = () => {
+    const tableName = process.env["DB_NAME"];
+    if (!tableName) {
+        throw new Error("Cannot find env var DB_NAME")
+    }
+
+    return tableName;
+}
+
+exports.getStackName = () => {
+    const stackName = process.env["AWS_SAM_STACK_NAME"]
+    if (!stackName) {
+        throw new Error("Cannot find env var AWS_SAM_STACK_NAME")
+    }
+
+    return stackName
+};
+
+
+
 exports.parseRequest = (event) => {
     // console.log("parseRequest(event.body: %s)", event.body)
     const equipment = JSON.parse(event.body)
