@@ -11,11 +11,18 @@ AWS ApiGateway + Lambda + Dynamodb (Cognito, Pipeline)
 - setup local dev env
   - SAM local + Dynamodb local 
 - implement lambdas + unit tests
-- pagination ?
+
 - setup deployment env
   - setup SAM for deployment
-- implement data schema check in API gateway
+
 - implement frontend
+
+
+
+## TODO
+- implement data schema check in API gateway ?
+- pagination ?
 - allow API key
-- allow data encryption with SSL 
+- allow data encryption with SSL
 - allow integration test with Code Pipeline
+- hide DELETE from Prod stage

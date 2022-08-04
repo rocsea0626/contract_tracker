@@ -57,4 +57,5 @@ exports.createdResponse = (payload) => getLambdaResponse(201, payload);
 exports.unauthorizedResponse = (payload) => getLambdaResponse(401, payload);
 exports.notFoundResponse = (errorObj) => errorResponse(404, errorObj);
 exports.badRequestResponse = (errorObj) => errorResponse(400, errorObj);
+exports.conflictResponse = (errorObj) => errorResponse(409, errorObj);
 exports.internalServerErrorResponse = (errorObj) => errorResponse(500, errorObj);

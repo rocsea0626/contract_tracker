@@ -16,9 +16,11 @@ exports.lambdaHandler = async (event, context) => {
         const result = await db.createEquipment(equipment)
         return utils.createdResponse(equipment)
 
-
     } catch (err) {
         console.error(err)
+        if (err.code === "ConditionalCheckFailedException"){
+            return utils.conflictResponse(err)
+        }
         return utils.internalServerErrorResponse(err)
     }
 };

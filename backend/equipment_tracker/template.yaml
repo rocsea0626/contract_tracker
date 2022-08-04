@@ -89,7 +89,7 @@ Resources:
 
   EquipmentsTable:
     Type: AWS::DynamoDB::Table
-    DeletionPolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       TableName: EquipmentsTable
       AttributeDefinitions:
