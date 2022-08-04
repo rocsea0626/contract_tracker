@@ -87,6 +87,16 @@ describe('Tests db functions', function () {
             const result = await db.getEquipmentByNumber('fake_equipment_number')
             expect(result).to.be.empty
         })
+
+        it('Failed, equipmentNumber===""', async () => {
+            try{
+                const result = await db.getEquipmentByNumber('')
+                expect(result).to.be.empty
+            } catch(err) {
+                console.log(err)
+                expect(err.code).to.equal('ValidationException');
+            }
+        })
     })
 
     describe('Test getEquipments()', ()=>{

@@ -1,3 +1,7 @@
+exports.isEmpty = (object) => {
+    return Object.keys(object).length === 0
+}
+
 exports.getDynamodbTableName = () => {
     const tableName = process.env["DB_NAME"];
     if (!tableName) {
