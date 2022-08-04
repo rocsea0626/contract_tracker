@@ -71,4 +71,19 @@ describe('Tests create equipment, ~/equipment (POST)', function () {
         expect(resp.statusCode).to.equal(400)
     })
 
+    it('Failed, return 409, conflict item alreayd exist', async () => {
+        sandbox.stub(db, 'createEquipment').rejects({code: 'ConditionalCheckFailedException'})
+        const event = {
+            body: JSON.stringify({
+                EquipmentNumber: "en_12345",
+                Address: "address_1",
+                StartDate: "start_date_1",
+                EndDate: "end_date_1",
+                Status: "Running",
+            })
+        }
+        const respFailed = await app.lambdaHandler(event, {})
+        expect(respFailed.statusCode).to.equal(409)
+    })
+
 });
