@@ -147,6 +147,30 @@ describe('Tests db functions', function () {
             expect(result.Items[0].EquipmentNumber).to.equal("en_34567")
             expect(result.Items[1].EquipmentNumber).to.equal("en_23456")
         })
+
+        it('Failed, limit is negative', async () => {
+            try{
+                const result = await db.getEquipments(-2)
+            }catch (err){
+                expect(err.code).to.equal("ValidationException")
+            }
+        })
+
+        it('Failed, limit is undefined', async () => {
+            try{
+                const result = await db.getEquipments()
+            }catch (err){
+                expect(err.code).to.equal("ValidationException")
+            }
+        })
+
+        it('Failed, limit is not a number', async () => {
+            try{
+                const result = await db.getEquipments('a')
+            }catch (err){
+                expect(err.code).to.equal("ValidationException")
+            }
+        })
     })
 });
 
