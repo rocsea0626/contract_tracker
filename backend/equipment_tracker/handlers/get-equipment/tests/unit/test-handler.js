@@ -23,8 +23,9 @@ describe('Tests get equipment, ~/equipment/{equipmentNumber} (GET)', function ()
         })
         const event = {
             pathParameters: {
-                equipmentNumber: "en_12345"
-            }
+                equipmentNumber: "en_12345",
+            },
+            httpMethod: 'GET'
         }
         const resp = await app.lambdaHandler(event, {})
 
@@ -37,7 +38,8 @@ describe('Tests get equipment, ~/equipment/{equipmentNumber} (GET)', function ()
     it('Failed, return 400, bad request, equipmentNumber is missing', async () => {
         sandbox.stub(db, 'getEquipmentByNumber').resolves({})
         const event = {
-            pathParameters: {}
+            pathParameters: {},
+            httpMethod: 'GET'
         }
         const resp = await app.lambdaHandler(event, {})
         expect(resp.statusCode).to.equal(400)
@@ -47,10 +49,74 @@ describe('Tests get equipment, ~/equipment/{equipmentNumber} (GET)', function ()
         sandbox.stub(db, 'getEquipmentByNumber').resolves({})
         const event = {
             pathParameters: {
-                equipmentNumber: "en_12345"
-            }
+                equipmentNumber: "en_12345",
+            },
+            httpMethod: 'GET'
         }
         const resp = await app.lambdaHandler(event, {})
         expect(resp.statusCode).to.equal(404)
     })
 });
+
+describe('Tests delete equipment, ~/equipment/{equipmentNumber} (DELETE)', function () {
+
+    afterEach(async ()=>{
+        sandbox.restore()
+    })
+
+    it('Successful, return 200, get succeeds', async () => {
+        sandbox.stub(db, 'deleteEquipmentByNumber').resolves({
+            EquipmentNumber: "en_12345",
+            Address: "address_1",
+            StartDate: "start_date_1",
+            EndDate: "end_date_1",
+            Status: "Running",
+        })
+        const event = {
+            pathParameters: {
+                equipmentNumber: "en_12345",
+            },
+            httpMethod: 'DELETE'
+        }
+        const resp = await app.lambdaHandler(event, {})
+
+        expect(resp.statusCode).to.equal(200)
+        const equipment = JSON.parse(resp.body)
+        expect(equipment.EquipmentNumber).to.equal("en_12345")
+        expect(equipment.StartDate).to.equal("start_date_1")
+    })
+
+    it('Failed, return 400, bad request, equipmentNumber is missing', async () => {
+        sandbox.stub(db, 'deleteEquipmentByNumber').resolves({})
+        const event = {
+            pathParameters: {},
+            httpMethod: 'DELETE'
+        }
+        const resp = await app.lambdaHandler(event, {})
+        expect(resp.statusCode).to.equal(400)
+    });
+
+    it('Failed, return 404, not found', async () => {
+        sandbox.stub(db, 'deleteEquipmentByNumber').resolves(undefined)
+        const event = {
+            pathParameters: {
+                equipmentNumber: "en_12345",
+            },
+            httpMethod: 'DELETE'
+        }
+        const resp = await app.lambdaHandler(event, {})
+        expect(resp.statusCode).to.equal(404)
+    })
+
+    it('Failed, return 400, invalid http method: POST', async () => {
+        const event = {
+            pathParameters: {
+                equipmentNumber: "en_12345",
+            },
+            httpMethod: 'POST'
+        }
+        const resp = await app.lambdaHandler(event, {})
+        expect(resp.statusCode).to.equal(400)
+    })
+});
+

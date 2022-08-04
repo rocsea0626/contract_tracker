@@ -13,13 +13,28 @@ exports.lambdaHandler = async (event, context) => {
             return utils.badRequestResponse(error)
         }
 
-        const equipment = await db.getEquipmentByNumber(equipmentNumber)
-        if(!equipment || utils.isEmpty(equipment)){
-            const error = new Error(`not found by equipmentNumber: ${equipmentNumber}`)
-            console.error(error)
-            return utils.notFoundResponse(error)
+        if(event.httpMethod === 'GET'){
+            const equipment = await db.getEquipmentByNumber(equipmentNumber)
+            if(!equipment || utils.isEmpty(equipment)){
+                const error = new Error(`not found by equipmentNumber: ${equipmentNumber}`)
+                console.error(error)
+                return utils.notFoundResponse(error)
+            }
+            return utils.okResponse(equipment)
         }
-        return utils.okResponse(equipment)
+
+        if(event.httpMethod === 'DELETE'){
+            const equipment = await db.deleteEquipmentByNumber(equipmentNumber)
+            if(!equipment){
+                const error = new Error(`not found by equipmentNumber: ${equipmentNumber}`)
+                console.error(error)
+                return utils.notFoundResponse(error)
+            }
+            return utils.okResponse(equipment)
+        }
+
+        return utils.badRequestResponse(new Error(`HTTP method: ${event.httpMethod} is not accepted by this resource`))
+
     } catch (err) {
         console.error(err)
         return utils.internalServerErrorResponse(err)

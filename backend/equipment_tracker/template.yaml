@@ -34,6 +34,20 @@ Resources:
         - DynamoDBReadPolicy:
             TableName: !Ref EquipmentsTable
 
+  DeleteEquipment:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/get-equipment/
+      Events:
+        GetEquipment:
+          Type: Api
+          Properties:
+            Path: /equipment/{equipment_number}
+            Method: delete
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref EquipmentsTable
+
   CreateEquipment:
     Type: AWS::Serverless::Function
     Properties:
@@ -130,6 +144,12 @@ Outputs:
   GetEquipmentIamRole:
     Description: "Implicit IAM Role created for GetEquipment function"
     Value: !GetAtt GetEquipmentRole.Arn
+  DeleteEquipment:
+    Description: "DeleteEquipment Function ARN"
+    Value: !GetAtt DeleteEquipment.Arn
+  DeleteEquipmentIamRole:
+    Description: "Implicit IAM Role created for DeleteEquipment function"
+    Value: !GetAtt DeleteEquipmentRole.Arn
   CreateEquipment:
     Description: "CreateEquipment Function ARN"
     Value: !GetAtt CreateEquipment.Arn
