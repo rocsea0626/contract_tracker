@@ -4,15 +4,18 @@ const utils  = require(process.env.AWS_EXECUTION_ENV ? '/opt/utils/utils' : '../
 exports.lambdaHandler = async (event, context) => {
     try {
         const equipment = utils.parseRequest(event)
-        if(!equipment)
-            return utils.badRequestResponse(new Error(`invalid request, event.body: ${event.body}`))
+        if(!equipment){
+            const error = new Error(`invalid request, event.body: ${event.body}`)
+            console.error(error)
+            return utils.badRequestResponse(error)
+        }
 
         const result = await db.createEquipment(equipment)
         return utils.createdResponse(equipment)
 
 
     } catch (err) {
-        console.log(err)
+        console.error(err)
         return utils.internalServerErrorResponse(err)
     }
 };

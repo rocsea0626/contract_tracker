@@ -42,9 +42,19 @@ const getLambdaResponse = (statusCode, object) => ({
     body: JSON.stringify(object),
 });
 
+const errorResponse = (statusCode, errorObj) => ({
+    statusCode,
+    headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "ANY",
+    },
+    body: errorObj.message,
+})
+
 exports.okResponse = (payload) => getLambdaResponse(200, payload);
 exports.createdResponse = (payload) => getLambdaResponse(201, payload);
 exports.unauthorizedResponse = (payload) => getLambdaResponse(401, payload);
-exports.notFoundResponse = (error) => getLambdaResponse(404, error);
-exports.badRequestResponse = (error) => getLambdaResponse(400, error);
-exports.internalServerErrorResponse = (error) => getLambdaResponse(500, error);
+exports.notFoundResponse = (errorObj) => errorResponse(404, errorObj);
+exports.badRequestResponse = (errorObj) => errorResponse(400, errorObj);
+exports.internalServerErrorResponse = (errorObj) => errorResponse(500, errorObj);

@@ -6,19 +6,19 @@ exports.lambdaHandler = async (event, context) => {
         const {equipmentNumber} = event.pathParameters
         if(!equipmentNumber){
             const error = new Error(`invalid request, equipmentNumber: ${equipmentNumber}`)
-            console.log(JSON.stringify(error))
+            console.error(error)
             return utils.badRequestResponse(error)
         }
 
         const equipment = await db.getEquipmentByNumber(equipmentNumber)
         if(!equipment || utils.isEmpty(equipment)){
             const error = new Error(`not found by equipmentNumber: ${equipmentNumber}`)
-            console.log(JSON.stringify(error))
+            console.error(error)
             return utils.notFoundResponse(error)
         }
         return utils.okResponse(equipment)
     } catch (err) {
-        console.log(JSON.stringify(err));
+        console.error(error)
         return utils.internalServerErrorResponse(err)
     }
 }
