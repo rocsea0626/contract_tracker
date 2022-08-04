@@ -17,8 +17,11 @@ exports.lambdaHandler = async (event, context) => {
         return utils.createdResponse(equipment)
 
     } catch (err) {
+        console.log("error here")
         console.error(err)
-        if (err.code === "ConditionalCheckFailedException"){
+        console.log("err.code: %s", err.code)
+        if (err.code && err.code === 'ConditionalCheckFailedException'){
+            console.log("error handled, ConditionalCheckFailedException")
             return utils.conflictResponse(err)
         }
         return utils.internalServerErrorResponse(err)
