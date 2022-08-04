@@ -4,32 +4,14 @@ const chai = require("chai");
 const AWS = require("aws-sdk");
 const https = require("https");
 const expect = chai.expect;
+const testingUtils = require("../../../../testing-utils/testing-utils")
 
-/**
- * Get stack name from environment variable AWS_SAM_STACK_NAME.
- * throw exception if AWS_SAM_STACK_NAME is not set.
- */
-const getStackName = () => {
-  const stackName = process.env["AWS_SAM_STACK_NAME"];
-  if (!stackName) {
-    throw new Error(
-      "Cannot find env var AWS_SAM_STACK_NAME.\n" +
-        "Please setup this environment variable with the stack name where we are running integration tests."
-    );
-  }
-
-  return stackName;
-};
-
-/**
- * Make sure env variable AWS_SAM_STACK_NAME exists with the name of the stack we are going to test.
- */
 describe("Test /health", function () {
   let apiEndpoint;
 
   before(async () => {
-    const stackName = getStackName();
-    const client = new AWS.CloudFormation({region: 'eu-central-1'});
+    const stackName = testingUtils.getStackName();
+    const client = new AWS.CloudFormation({region: testingUtils.getRegion()});
 
     let response;
     try {
