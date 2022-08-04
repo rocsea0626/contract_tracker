@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "env DB_NAME=EquipmentsTable mocha 'handlers/*/tests/unit/*' 'layers/nodejs/*/*'",
-    "integ-test": "mocha 'handlers/health/tests/integration/*'"
+    "integ-test": "mocha 'handlers/create-equipment/tests/integration/*'"
   },
   "devDependencies": {
     "aws-sdk": "^2.815.0",

@@ -1,79 +1,43 @@
 "use strict"
 
 const chai = require("chai");
-const AWS = require("aws-sdk");
-const https = require("https");
+const axios = require("axios");
+const testingUtils = require("../../../../testing-utils/testing-utils")
 const expect = chai.expect;
 
-const getStackName = () => {
-  const stackName = process.env["AWS_SAM_STACK_NAME"];
-  if (!stackName) {
-    throw new Error(
-      "Cannot find env var AWS_SAM_STACK_NAME.\n"
-    );
-  }
-
-  return stackName;
-};
 
 /**
  * Make sure env variable AWS_SAM_STACK_NAME exists with the name of the stack we are going to test.
  */
-describe("Test API Gateway", function () {
+describe("Test (POST) /equipment", function () {
   let apiEndpoint;
 
-  /**
-   * Based on the provided stack name,
-   * here we use cloudformation API to find out what the HelloWorldApi URL is
-   */
   before(async () => {
-    const stackName = getStackName();
-    const client = new AWS.CloudFormation({region: 'eu-central-1'});
-    console.log("client: %s", JSON.stringify(client))
-    let response;
-    try {
-      response = await client
-        .describeStacks({
-          StackName: stackName,
-        })
-        .promise();
-    } catch (e) {
-      throw new Error(
-        `Cannot find stack ${stackName}: ${e.message}`
-      );
-    }
-
-    const stacks = response.Stacks;
-
-    const stackOutputs = stacks[0].Outputs;
-    const apiOutput = stackOutputs.find(
-      (output) => output.OutputKey === "HelloWorldApi"
-    );
-
-    expect(apiOutput, `Cannot find output HelloWorldApi in stack ${stackName}`)
-      .not.to.be.undefined;
-
-    apiEndpoint = apiOutput.OutputValue;
+    apiEndpoint = await testingUtils.getApiEndpoint()
+    console.log("apiEndpoint: %s", apiEndpoint)
   });
 
-  /**
-   * Call the API Gateway endpoint and check the response
-   */
-  it("verifies successful response from api gateway", (done) => {
-    console.info("api endpoint:", apiEndpoint);
-    https
-      .get(apiEndpoint, (res) => {
-        expect(res.statusCode).to.be.equal(200);
+  it("returns 201, created", (done) => {
+    const path = apiEndpoint + 'equipment'
+    const payload = {
+      EquipmentNumber: "en_12345",
+      Address: "address_1",
+      StartDate: "start_date_1",
+      EndDate: "end_date_1",
+      Status: "Running",
+    }
 
-        res.on("data", (data) => {
-          const response = JSON.parse(data);
-          expect(response).to.be.an("object");
-          expect(response.message).to.be.equal("hello world");
-          done();
-        });
-      })
-      .on("error", (e) => {
-        throw e;
-      });
+    axios.post(path, payload)
+    .then(res => {
+      console.log(`statusCode: ${res.status}`);
+      expect(res.status).to.equal(201);
+      expect(res.data).to.be.an("object");
+      expect(res.data.EquipmentNumber).to.equal("en_12345");
+      done()
+    })
+    .catch(error => {
+      console.error(error);
+      throw error
+    });
   });
 });
