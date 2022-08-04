@@ -5,18 +5,20 @@ const dynamoDB = new AWS.DynamoDB({
 })
 
 const getDocumentClient = () => {
-    if(!process.env.AWS){
+    console.log("getDocumentClient(), process.env.AWS_EXECUTION_ENV: ", process.env.AWS_EXECUTION_ENV)
+    if(!process.env.AWS_EXECUTION_ENV){
+        console.log("getDocumentClient(), run at local")
         return new AWS.DynamoDB.DocumentClient({
             region: "localhost",
             endpoint: "http://localhost:8000",
+            convertEmptyValues: true,
         })
     }
-    return new AWS.DynamoDB.DocumentClient()
+    console.log("getDocumentClient(), run at AWS")
+    return new AWS.DynamoDB.DocumentClient({convertEmptyValues: true})
 }
 
 exports.createEquipment = async (equipment) => {
-    // console.log("createEquipment(), equipment: %s", JSON.stringify(equipment))
-
     const params = {
         Item: {
             "EquipmentNumber": equipment.EquipmentNumber,
@@ -29,19 +31,21 @@ exports.createEquipment = async (equipment) => {
         ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
     }
     // console.log("createEquipment(), params: %s", JSON.stringify(params))
+    // const client = new AWS.DynamoDB.DocumentClient({convertEmptyValues: true})
+    // console.log("createEquipment(), client", JSON.stringify(client))
     const result = await getDocumentClient().put(params).promise()
-    // console.log("createEquipment(), result: %s", result)
-
     return result
 }
 
 exports.getEquipmentByNumber = async (equipmentNumber) => {
+    console.log("getEquipmentByNumber(), equipmentNumber: %s", equipmentNumber)
     const params = {
         TableName : process.env.DB_NAME,
         Key: {
             'EquipmentNumber': equipmentNumber
         }
     }
+    console.log("getEquipmentByNumber(), params: %s", JSON.stringify(params))
     const result = await getDocumentClient().get(params).promise()
     console.log("getEquipmentByNumber(), result: %s", JSON.stringify(result))
     return result

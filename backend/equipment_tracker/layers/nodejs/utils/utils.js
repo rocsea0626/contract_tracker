@@ -1,30 +1,3 @@
-
-exports.validateRequest = (event) => {
-    console.log("validateRequest(event.body: %s)", event.body)
-    const equipment = JSON.parse(event.body)
-    console.log("validateRequest(equipment: %s)", equipment)
-    if (!equipment || !equipment.EquipmentNumber ||
-            !equipment.Address ||
-            !equipment.StartDate ||
-            !equipment.EndDate ||
-            !equipment.Status){
-
-        console.log("validateRequest(), missing attributes")
-        console.log("equipment.EquipmentNumber: %s", equipment.EquipmentNumber)
-        console.log("equipment.Address: %s", equipment.Address)
-        console.log("equipment.StartDate: %s", equipment.StartDate)
-        console.log("equipment.EndDate: %s", equipment.EndDate)
-        console.log("equipment.Status: %s", equipment.Status)
-        return false
-    }
-    if(equipment.Status !== 'Running' && equipment.Status !== 'Stopped'){
-        console.log("validateRequest(), invalid Status value")
-        return false
-    }
-
-    return true
-}
-
 exports.parseRequest = (event) => {
     // console.log("parseRequest(event.body: %s)", event.body)
     const equipment = JSON.parse(event.body)
@@ -35,12 +8,7 @@ exports.parseRequest = (event) => {
         !equipment.EndDate ||
         !equipment.Status){
 
-        console.log("parseRequest(), missing attributes")
-        console.log("equipment.EquipmentNumber: %s", equipment.EquipmentNumber)
-        console.log("equipment.Address: %s", equipment.Address)
-        console.log("equipment.StartDate: %s", equipment.StartDate)
-        console.log("equipment.EndDate: %s", equipment.EndDate)
-        console.log("equipment.Status: %s", equipment.Status)
+        // console.log("parseRequest(), missing attributes")
         return null
     }
     if(equipment.Status !== 'Running' && equipment.Status !== 'Stopped'){
@@ -51,38 +19,19 @@ exports.parseRequest = (event) => {
     return equipment
 }
 
-exports.successResponse = (statusCode, body) => {
-    return {
-        'statusCode': statusCode,
-        'body': body,
-    }
-}
-exports.errorResponse = (statusCode, errStr) => {
-    console.error(errStr);
-    return exports.successResponse(statusCode, errStr)
-}
-
-exports.HttpStatusCode = {
-    OK: 200,
-    CREATED: 201,
-    BadRequest: 400,
-    NotFound: 404,
-    InternalServerError: 500
-}
-
 const getLambdaResponse = (statusCode, object) => ({
     statusCode,
     headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "GET",
+        "Access-Control-Allow-Methods": "ANY",
     },
     body: JSON.stringify(object),
 });
 
-exports.ok = (payload) => getLambdaResponse(200, payload);
-exports.created = (payload) => getLambdaResponse(201, object);
-exports.unauthorized = (payload) => getLambdaResponse(401, payload);
-exports.notFound = (errorMessage) => getLambdaResponse(404, { errorMessage });
-exports.badRequest = (errorMessage) => getLambdaResponse(400, errorMessage);
-exports.internalServerError = (errorMessage) => getLambdaResponse(500, { errorMessage });
+exports.okResponse = (payload) => getLambdaResponse(200, payload);
+exports.createdResponse = (payload) => getLambdaResponse(201, payload);
+exports.unauthorizedResponse = (payload) => getLambdaResponse(401, payload);
+exports.notFoundResponse = (error) => getLambdaResponse(404, error);
+exports.badRequestResponse = (error) => getLambdaResponse(400, error);
+exports.internalServerErrorResponse = (error) => getLambdaResponse(500, error);

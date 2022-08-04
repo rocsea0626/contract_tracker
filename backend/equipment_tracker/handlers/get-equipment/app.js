@@ -1,21 +1,13 @@
-// const axios = require('axios')
-// const url = 'http://checkip.amazonaws.com/';
+const db  = require(process.env.AWS_EXECUTION_ENV ? '/opt/db/dynamodb' : '../../layers/nodejs/db/dynamodb')
+
 let response;
 
 exports.lambdaHandler = async (event, context) => {
     try {
-        console.log("event.body, %s", event.body);
-        // const ret = await axios(url);
-        const mockResp = {
-            EquipmentNumber: "en_12345",
-            Address: "mock_address",
-            StartDate: "mock_start_date",
-            EndDate: "mock_end_date",
-            Status: "running",
-        }
+        const item = db.getEquipmentByNumber("12345")
         response = {
             'statusCode': 200,
-            'body': JSON.stringify(mockResp)
+            'body': JSON.stringify(item)
         }
     } catch (err) {
         console.log(err);
