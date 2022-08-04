@@ -5,7 +5,7 @@ exports.lambdaHandler = async (event, context) => {
     try {
         const equipment = utils.parseRequest(event)
         if(!equipment)
-            return utils.badRequestResponse(Error("invalid request, event.body: " + event.body))
+            return utils.badRequestResponse(new Error(`invalid request, event.body: ${event.body}`))
 
         const result = await db.createEquipment(equipment)
         return utils.createdResponse(equipment)
