@@ -28,8 +28,11 @@ Resources:
         GetEquipment:
           Type: Api
           Properties:
-            Path: /equipment
+            Path: /equipment/{equipment_number}
             Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref EquipmentsTable
 
   CreateEquipment:
     Type: AWS::Serverless::Function
@@ -41,6 +44,9 @@ Resources:
           Properties:
             Path: /equipment
             Method: post
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref EquipmentsTable
   Health:
     Type: AWS::Serverless::Function
     Properties:
@@ -51,6 +57,14 @@ Resources:
           Properties:
             Path: /health
             Method: any
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:PutItem
+            Resource: !GetAtt
+              - EquipmentsTable
+              - Arn
 
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction

@@ -1,93 +1,37 @@
-const AWS = require('aws-sdk')
-const dynamoDB = new AWS.DynamoDB({
-    region: "localhost",
-    endpoint: "http://localhost:8000",
-})
+exports.parseRequest = (event) => {
+    // console.log("parseRequest(event.body: %s)", event.body)
+    const equipment = JSON.parse(event.body)
+    // console.log("parseRequest(equipment: %s)", equipment)
+    if (!equipment || !equipment.EquipmentNumber ||
+        !equipment.Address ||
+        !equipment.StartDate ||
+        !equipment.EndDate ||
+        !equipment.Status){
 
-const getDocumentClient = () => {
-    if(!process.env.AWS){
-        return new AWS.DynamoDB.DocumentClient({
-            region: "localhost",
-            endpoint: "http://localhost:8000",
-        })
+        // console.log("parseRequest(), missing attributes")
+        return null
     }
-    return new AWS.DynamoDB.DocumentClient()
+    if(equipment.Status !== 'Running' && equipment.Status !== 'Stopped'){
+        console.log("parseRequest(), invalid Status value")
+        return null
+    }
+
+    return equipment
 }
 
-exports.createEquipment = async (event) => {
-    const params = {
-        Item: {
-            "EquipmentNumber": event.body.EquipmentNumber,
-            "Address": event.body.Address,
-            "StartDate": event.body.StartDate,
-            "EndDate": event.body.EndDate,
-            "Status": event.body.Status
-        },
-        TableName: process.env.DB_NAME,
-        ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
-    }
-    const result = await getDocumentClient().put(params).promise()
-    console.log("createEquipment(), result: %s", result)
+const getLambdaResponse = (statusCode, object) => ({
+    statusCode,
+    headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "ANY",
+    },
+    body: JSON.stringify(object),
+});
 
-    return result
-}
-
-exports.getEquipmentByNumber = async (equipmentNumber) => {
-    const params = {
-        TableName : process.env.DB_NAME,
-        Key: {
-            'EquipmentNumber': equipmentNumber
-        }
-    }
-    const result = await getDocumentClient().get(params).promise()
-    console.log("getEquipmentByNumber(), result: %s", JSON.stringify(result))
-    return result
-}
-
-exports.getEquipments = async (limit) => {
-    const params = {
-        TableName : process.env.DB_NAME,
-        Limit: limit
-    }
-    const result = await getDocumentClient().scan(params).promise()
-    console.log("getEquipments(), result: %s", JSON.stringify(result))
-    return result
-}
-
-exports.validateRequest = (event) => {
-    console.log("validateRequest(event.body: %s)", event.body)
-    if (!event.body.EquipmentNumber || !event.body.Address || !event.body.StartDate || !event.body.EndDate || !event.body.Status){
-        return false
-    }
-    if(event.body.Status !== 'Running' && event.body.Status !== 'Stopped')
-        return false
-    return true
-}
-
-exports.createTable = async () => {
-    const params = {
-        TableName: process.env.DB_NAME,
-        KeySchema: [
-            { "AttributeName": "EquipmentNumber", "KeyType": "HASH" }
-        ],
-        AttributeDefinitions: [
-            { AttributeName: "EquipmentNumber", AttributeType: "S" }
-        ],
-        ProvisionedThroughput: {
-            ReadCapacityUnits: 5,
-            WriteCapacityUnits: 1
-        }
-    }
-    const result = await dynamoDB.createTable(params).promise()
-    // console.log("createTable(), result: %s", JSON.stringify(result))
-    return result
-}
-
-exports.deleteTable = async () => {
-    const params = {
-        TableName: process.env.DB_NAME,
-    }
-    const result = await dynamoDB.deleteTable(params).promise()
-    // console.log("deleteTable(), result: %s", JSON.stringify(result))
-    return result
-}
+exports.okResponse = (payload) => getLambdaResponse(200, payload);
+exports.createdResponse = (payload) => getLambdaResponse(201, payload);
+exports.unauthorizedResponse = (payload) => getLambdaResponse(401, payload);
+exports.notFoundResponse = (error) => getLambdaResponse(404, error);
+exports.badRequestResponse = (error) => getLambdaResponse(400, error);
+exports.internalServerErrorResponse = (error) => getLambdaResponse(500, error);
