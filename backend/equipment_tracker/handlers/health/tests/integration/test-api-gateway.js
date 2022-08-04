@@ -19,7 +19,6 @@ describe("Test /health", function () {
       axios.get(path)
           .then(res => {
               expect(res.status).to.be.equal(200);
-              // console.log(res.data)
               expect(res.data).to.be.an("object");
               expect(res.data['context.httpMethod']).to.be.equal("GET");
               done();

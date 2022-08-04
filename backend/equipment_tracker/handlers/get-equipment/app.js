@@ -1,18 +1,14 @@
 const db  = require(process.env.AWS_EXECUTION_ENV ? '/opt/db/dynamodb' : '../../layers/nodejs/db/dynamodb')
-
-let response;
+const utils  = require(process.env.AWS_EXECUTION_ENV ? '/opt/utils/utils' : '../../layers/nodejs/utils/utils')
+const AWS = require("aws-sdk");
 
 exports.lambdaHandler = async (event, context) => {
     try {
-        const item = db.getEquipmentByNumber("12345")
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify(item)
-        }
+        const {equipmentNumber} = event.pathParameters
+        const equipment = await db.getEquipmentByNumber(equipmentNumber)
+        return utils.okResponse(equipment)
     } catch (err) {
-        console.log(err);
-        return err;
+        console.log(JSON.stringify(err));
+        return utils.internalServerErrorResponse(err)
     }
-
-    return response
-};
+}

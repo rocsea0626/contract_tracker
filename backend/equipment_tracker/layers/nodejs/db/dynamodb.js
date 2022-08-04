@@ -2,23 +2,19 @@ const AWS = require('aws-sdk')
 const utils = require('../utils/utils')
 
 
-const dynamoDB = new AWS.DynamoDB({
-    region: "localhost",
-    endpoint: "http://localhost:8000",
-})
+const getOptions = () => {
+    const options = {}
+    if(!process.env.AWS_EXECUTION_ENV){
+        options['region'] = "localhost"
+        options['endpoint'] = "http://localhost:8000"
+    }
+    return options
+}
+
+const dynamoDB = new AWS.DynamoDB(getOptions())
 
 const getDocumentClient = () => {
-    console.log("getDocumentClient(), process.env.AWS_EXECUTION_ENV: ", process.env.AWS_EXECUTION_ENV)
-    if(!process.env.AWS_EXECUTION_ENV){
-        console.log("getDocumentClient(), run at local")
-        return new AWS.DynamoDB.DocumentClient({
-            region: "localhost",
-            endpoint: "http://localhost:8000",
-            convertEmptyValues: true,
-        })
-    }
-    console.log("getDocumentClient(), run at AWS")
-    return new AWS.DynamoDB.DocumentClient({convertEmptyValues: true})
+    return new AWS.DynamoDB.DocumentClient(getOptions())
 }
 
 exports.createEquipment = async (equipment) => {
@@ -49,9 +45,14 @@ exports.getEquipmentByNumber = async (equipmentNumber) => {
         }
     }
     console.log("getEquipmentByNumber(), params: %s", JSON.stringify(params))
-    const result = await getDocumentClient().get(params).promise()
-    console.log("getEquipmentByNumber(), result: %s", JSON.stringify(result))
-    return result
+    try{
+        const result = await getDocumentClient().get(params).promise()
+        console.log("getEquipmentByNumber(), result: %s", JSON.stringify(result))
+        return result
+    } catch (err) {
+        console.log(err)
+        throw err
+    }
 }
 
 exports.getEquipments = async (limit) => {

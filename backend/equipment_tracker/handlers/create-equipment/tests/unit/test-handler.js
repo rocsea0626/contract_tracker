@@ -9,7 +9,7 @@ const sandbox = sinon.createSandbox()
 
 describe('Tests create equipment, ~/equipment (POST)', function () {
     it('Succesful, return 201, creation succeeds', async () => {
-        sandbox.stub(db, 'createEquipment').returns({promise: () => {{}}});
+        sandbox.stub(db, 'createEquipment').resolves({})
         const event = {
             body: JSON.stringify({
                 EquipmentNumber: "en_12345",
@@ -20,8 +20,8 @@ describe('Tests create equipment, ~/equipment (POST)', function () {
             })
         }
         const resp = await app.lambdaHandler(event, {})
-        const equipment = JSON.parse(resp.body)
         expect(resp.statusCode).to.equal(201)
+        const equipment = JSON.parse(resp.body)
         expect(equipment.EquipmentNumber).to.equal("en_12345")
 
         const jsonResp = JSON.parse(resp.body)
