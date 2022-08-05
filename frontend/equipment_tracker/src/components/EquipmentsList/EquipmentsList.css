@@ -1,0 +1,16 @@
+tr {
+  cursor: pointer;
+}
+
+td.priceChange{
+  font-weight: bold;
+  font-style: oblique;
+}
+
+td.decrease{
+  color: brown;
+}
+
+td.increase{
+  color: green;
+}
