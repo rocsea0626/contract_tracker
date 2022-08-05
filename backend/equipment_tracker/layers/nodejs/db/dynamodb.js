@@ -1,24 +1,24 @@
 const AWS = require('aws-sdk')
-const dynamoDB = new AWS.DynamoDB({
-    region: "localhost",
-    endpoint: "http://localhost:8000",
-})
+const utils = require('../utils/utils')
+
+
+const getOptions = () => {
+    const options = {}
+    if(!process.env.AWS_EXECUTION_ENV){
+        options['region'] = "localhost"
+        options['endpoint'] = "http://localhost:8000"
+    }
+    return options
+}
+
+const dynamoDB = new AWS.DynamoDB(getOptions())
 
 const getDocumentClient = () => {
-    console.log("getDocumentClient(), process.env.AWS_EXECUTION_ENV: ", process.env.AWS_EXECUTION_ENV)
-    if(!process.env.AWS_EXECUTION_ENV){
-        console.log("getDocumentClient(), run at local")
-        return new AWS.DynamoDB.DocumentClient({
-            region: "localhost",
-            endpoint: "http://localhost:8000",
-            convertEmptyValues: true,
-        })
-    }
-    console.log("getDocumentClient(), run at AWS")
-    return new AWS.DynamoDB.DocumentClient({convertEmptyValues: true})
+    return new AWS.DynamoDB.DocumentClient(getOptions())
 }
 
 exports.createEquipment = async (equipment) => {
+    console.log("createEquipment(), equipment: %s", JSON.stringify(equipment))
     const params = {
         Item: {
             "EquipmentNumber": equipment.EquipmentNumber,
@@ -27,7 +27,7 @@ exports.createEquipment = async (equipment) => {
             "EndDate": equipment.EndDate,
             "Status": equipment.Status
         },
-        TableName: process.env.DB_NAME,
+        TableName: utils.getDynamodbTableName(),
         ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
     }
     // console.log("createEquipment(), params: %s", JSON.stringify(params))
@@ -40,30 +40,54 @@ exports.createEquipment = async (equipment) => {
 exports.getEquipmentByNumber = async (equipmentNumber) => {
     console.log("getEquipmentByNumber(), equipmentNumber: %s", equipmentNumber)
     const params = {
-        TableName : process.env.DB_NAME,
+        TableName : utils.getDynamodbTableName(),
         Key: {
             'EquipmentNumber': equipmentNumber
         }
     }
     console.log("getEquipmentByNumber(), params: %s", JSON.stringify(params))
-    const result = await getDocumentClient().get(params).promise()
-    console.log("getEquipmentByNumber(), result: %s", JSON.stringify(result))
-    return result
+    try{
+        const result = await getDocumentClient().get(params).promise()
+        console.log("getEquipmentByNumber(), result: %s", JSON.stringify(result))
+        return result
+    } catch (err) {
+        console.log(err)
+        throw err
+    }
+}
+
+exports.deleteEquipmentByNumber = async (equipmentNumber) => {
+    console.log("deleteEquipmentByNumber(), equipmentNumber: %s", equipmentNumber)
+    const params = {
+        TableName : utils.getDynamodbTableName(),
+        Key: {
+            'EquipmentNumber': equipmentNumber
+        },
+        ReturnValues: 'ALL_OLD'
+    }
+    try{
+        const result = await getDocumentClient().delete(params).promise()
+        console.log("deleteEquipmentByNumber(), result: %s", JSON.stringify(result))
+        return result.Attributes
+    } catch (err) {
+        console.log(err)
+        throw err
+    }
 }
 
 exports.getEquipments = async (limit) => {
     const params = {
-        TableName : process.env.DB_NAME,
+        TableName : utils.getDynamodbTableName(),
         Limit: limit
     }
     const result = await getDocumentClient().scan(params).promise()
     console.log("getEquipments(), result: %s", JSON.stringify(result))
-    return result
+    return result.Items
 }
 
 exports.createTable = async () => {
     const params = {
-        TableName: process.env.DB_NAME,
+        TableName: utils.getDynamodbTableName(),
         KeySchema: [
             { "AttributeName": "EquipmentNumber", "KeyType": "HASH" }
         ],
@@ -82,7 +106,7 @@ exports.createTable = async () => {
 
 exports.deleteTable = async () => {
     const params = {
-        TableName: process.env.DB_NAME,
+        TableName: utils.getDynamodbTableName(),
     }
     const result = await dynamoDB.deleteTable(params).promise()
     // console.log("deleteTable(), result: %s", JSON.stringify(result))

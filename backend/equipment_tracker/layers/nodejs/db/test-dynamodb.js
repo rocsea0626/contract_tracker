@@ -87,6 +87,16 @@ describe('Tests db functions', function () {
             const result = await db.getEquipmentByNumber('fake_equipment_number')
             expect(result).to.be.empty
         })
+
+        it('Failed, equipmentNumber===""', async () => {
+            try{
+                const result = await db.getEquipmentByNumber('')
+                expect(result).to.be.empty
+            } catch(err) {
+                console.log(err)
+                expect(err.code).to.equal('ValidationException');
+            }
+        })
     })
 
     describe('Test getEquipments()', ()=>{
@@ -132,11 +142,72 @@ describe('Tests db functions', function () {
             expect(resp3).to.be.empty
 
             const result = await db.getEquipments(2)
-            expect(result).to.be.an('object')
-            expect(result.Count).to.equal(2)
-            expect(result.Items[0].EquipmentNumber).to.equal("en_34567")
-            expect(result.Items[1].EquipmentNumber).to.equal("en_23456")
+            expect(result[0].EquipmentNumber).to.equal("en_34567")
+            expect(result[1].EquipmentNumber).to.equal("en_23456")
         })
+
+        it('Successful, no more items', async () => {
+            const result = await db.getEquipments(2)
+            expect(result.length).to.equal(0)
+        })
+
+        it('Failed, limit is negative', async () => {
+            try{
+                const result = await db.getEquipments(-2)
+            }catch (err){
+                expect(err.code).to.equal("ValidationException")
+            }
+        })
+
+        it('Failed, limit is undefined', async () => {
+            try{
+                const result = await db.getEquipments()
+            }catch (err){
+                expect(err.code).to.equal("ValidationException")
+            }
+        })
+
+        it('Failed, limit is not a number', async () => {
+            try{
+                const result = await db.getEquipments('a')
+            }catch (err){
+                expect(err.code).to.equal("ValidationException")
+            }
+        })
+    })
+
+    describe('Test deleteEquipmentByNumber()', ()=>{
+        beforeEach(async ()=>{
+            await db.createTable()
+        })
+
+        afterEach(async ()=>{
+            await db.deleteTable()
+        })
+
+        it('Successful', async () => {
+
+            const equipment = {
+                EquipmentNumber: "en_12345",
+                Address: "mock_address",
+                StartDate: "mock_start_date",
+                EndDate: "mock_end_date",
+                Status: "Running",
+            }
+
+            const resp = await db.createEquipment(equipment)
+            expect(resp).to.be.empty
+
+            const result = await db.deleteEquipmentByNumber("en_12345")
+            expect(result).to.be.not.empty
+            expect(result.EquipmentNumber).to.equal("en_12345")
+        })
+
+        it('Failed, item not found', async () => {
+            const result = await db.deleteEquipmentByNumber("en_12345")
+            expect(result).to.be.undefined
+        })
+
     })
 });
 

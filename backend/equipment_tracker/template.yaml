@@ -20,6 +20,23 @@ Globals:
         DB_NAME: !Ref EquipmentsTable
 
 Resources:
+  EquipmentsSearch:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/equipments/
+      Events:
+        EquipmentsSearch:
+          Type: Api
+          Properties:
+            Path: /equipment/search
+            RequestParameters:
+              - method.request.querystring.limit:
+                  Required: true
+            Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref EquipmentsTable
+
   GetEquipment:
     Type: AWS::Serverless::Function
     Properties:
@@ -28,10 +45,24 @@ Resources:
         GetEquipment:
           Type: Api
           Properties:
-            Path: /equipment/{equipment_number}
+            Path: /equipment/{equipmentNumber}
             Method: get
       Policies:
         - DynamoDBReadPolicy:
+            TableName: !Ref EquipmentsTable
+
+  DeleteEquipment:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/get-equipment/
+      Events:
+        GetEquipment:
+          Type: Api
+          Properties:
+            Path: /equipment/{equipmentNumber}
+            Method: delete
+      Policies:
+        - DynamoDBCrudPolicy:
             TableName: !Ref EquipmentsTable
 
   CreateEquipment:
@@ -89,7 +120,7 @@ Resources:
 
   EquipmentsTable:
     Type: AWS::DynamoDB::Table
-    DeletionPolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       TableName: EquipmentsTable
       AttributeDefinitions:
@@ -106,9 +137,9 @@ Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
+  ApiEndpointUrl:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
   HelloWorldFunction:
     Description: "Hello World Lambda Function ARN"
     Value: !GetAtt HelloWorldFunction.Arn
@@ -130,6 +161,18 @@ Outputs:
   GetEquipmentIamRole:
     Description: "Implicit IAM Role created for GetEquipment function"
     Value: !GetAtt GetEquipmentRole.Arn
+  EquipmentsSearch:
+    Description: "EquipmentsSearch Function ARN"
+    Value: !GetAtt EquipmentsSearch.Arn
+  EquipmentsSearchIamRole:
+    Description: "Implicit IAM Role created for EquipmentsSearch function"
+    Value: !GetAtt EquipmentsSearchRole.Arn
+  DeleteEquipment:
+    Description: "DeleteEquipment Function ARN"
+    Value: !GetAtt DeleteEquipment.Arn
+  DeleteEquipmentIamRole:
+    Description: "Implicit IAM Role created for DeleteEquipment function"
+    Value: !GetAtt DeleteEquipmentRole.Arn
   CreateEquipment:
     Description: "CreateEquipment Function ARN"
     Value: !GetAtt CreateEquipment.Arn

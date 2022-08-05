@@ -111,16 +111,25 @@ You can find more information and examples about filtering Lambda function logs 
 
 ## Tests
 
-Tests are defined in the `hello-world/tests` folder in this project. Use NPM to install the [Mocha test framework](https://mochajs.org/) and run tests.
+### Unit tests
+Backend unit tests are defined in the `contract_tracker/backend/**/tests/unit/` folders in this project.
 
 ```bash
-contract_tracker$ cd hello-world
-hello-world$ npm install
+contract_tracker$ cd contract_tracker
+contract_tracker$ npm install
 # Unit test
-hello-world$ npm run test
-# Integration test, requiring deploying the stack first.
-# Create the env variable AWS_SAM_STACK_NAME with the name of the stack we are testing
-hello-world$ AWS_SAM_STACK_NAME=<stack-name> npm run integ-test
+contract_tracker$ npm run test
+```
+
+### Integration tests
+Backend integration tests are defined in the `contract_tracker/backend/**/tests/integration` folders in this project.
+```bash
+contract_tracker$ cd contract_tracker
+contract_tracker$ npm install
+# Deploy SAM stack
+contract_tracker$ ./deploy.sh
+contract_tracker$ npm run integ-test
+contract_tracker$ AWS_SAM_STACK_NAME=<stack-name> npm run integ-test
 ```
 
 ## Cleanup

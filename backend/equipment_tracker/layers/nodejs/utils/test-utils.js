@@ -101,5 +101,41 @@ describe('Tests utils functions', function () {
             expect(equipment).to.be.null
         })
     })
+
+    describe('Test isEmpty()', ()=>{
+        it('object is empty', () => {
+            const obj = {}
+            expect(utils.isEmpty(obj)).to.equal(true)
+        })
+
+        it('object is not empty', () => {
+            const obj = {
+                key: "value"
+            }
+            expect(utils.isEmpty(obj)).to.equal(false)
+        })
+    })
+
+    describe('Test parseQueryStringLimit()', ()=>{
+        it('Success, limit=1', () => {
+            const limit = 1
+            expect(utils.parseQueryStringLimit(limit)).to.equal(1)
+        })
+
+        it('Success, limit=-1', () => {
+            const limit = -1
+            expect(utils.parseQueryStringLimit(limit)).to.equal(-1)
+        })
+
+        it('Failed, limit="a"', () => {
+            const limit = "a"
+            expect(utils.parseQueryStringLimit(limit)).to.equal(undefined)
+        })
+
+        it('Failed, limit=""', () => {
+            const limit = ""
+            expect(utils.parseQueryStringLimit(limit)).to.equal(undefined)
+        })
+    })
 });
 
