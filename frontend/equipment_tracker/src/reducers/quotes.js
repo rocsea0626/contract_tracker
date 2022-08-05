@@ -1,4 +1,4 @@
-import * as actionTypes from '../constants/actionTypes'
+import * as actionTypes from '../constants/SearchTerms'
 import * as utils from '../../src/utils'
 
 const initialState = {

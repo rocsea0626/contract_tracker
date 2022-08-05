@@ -1,30 +1,60 @@
 import { createSlice } from '@reduxjs/toolkit'
+import {equipments} from "../data/mock/data";
+import {LIMIT } from "../constants/SearchTerms";
 
 export const equipmentsSlice = createSlice({
-    name: 'counter',
+    name: 'equipments',
     initialState: {
         loading: false,
         data: [],
-        error: undefined
+        error: undefined,
+        limit: 3,
+        searchBy: LIMIT
     },
     reducers: {
-        loadEquipments: (state) => {
-            // Redux Toolkit allows us to write "mutating" logic in reducers. It
-            // doesn't actually mutate the state because it uses the Immer library,
-            // which detects changes to a "draft state" and produces a brand new
-            // immutable state based off those changes
+        setLimit: (state, action) => {
+            console.log("setLimit(payload: %s)", action.payload)
+            state.limit = action.payload
+        },
+        setSearchBy: (state, action) => {
+            console.log("setSearchBy(payload: %s)", action.payload)
+            state.searchBy = action.payload
+        },
+        equipmentsFetched: (state, action) => {
+            console.log("equipmentsFetched()")
+            state.data = action.payload
+            state.loading = false
+        },
+        equipmentsFetchStarts: (state) => {
+            console.log("equipmentsFetchStarts()")
             state.loading = true
+            state.error = undefined
         },
-        decrement: (state) => {
-            state.value -= 1
-        },
-        incrementByAmount: (state, action) => {
-            state.value += action.payload
+        equipmentsFetchFailed: (state, action) => {
+            console.log("equipmentsFetchFailed()")
+            state.loading = false
+            state.data = []
+            state.error = action.payload
         },
     }
 })
 
-// Action creators are generated for each case reducer function
-export const { loadEquipments, decrement, incrementByAmount } = equipmentsSlice.actions
+export const { equipmentsFetched, equipmentsFetchStarts, setSearchBy } = equipmentsSlice.actions
+
+export const loadEquipments = (limit) => (dispatch) => {
+    console.log("loadEquipments(limit: %s)", limit)
+    dispatch(equipmentsFetchStarts())
+    setTimeout(() => {
+        dispatch(equipmentsFetched(equipments))
+    }, 1000)
+}
+
+export const getEquipmentByNumber = (equipmentNumber) => (dispatch) => {
+    console.log("getEquipmentByNumber(equipmentNumber: %s)", equipmentNumber)
+    dispatch(equipmentsFetchStarts())
+    setTimeout(() => {
+        dispatch(equipmentsFetched([].push(equipments[0])))
+    }, 1000)
+}
 
 export default equipmentsSlice.reducer

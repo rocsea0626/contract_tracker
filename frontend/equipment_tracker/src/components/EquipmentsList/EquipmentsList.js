@@ -4,23 +4,33 @@ import './EquipmentsList.css';
 import Spinner from 'react-bootstrap/Spinner'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+import { loadEquipments, setSearchBy, getEquipmentByNumber } from '../../reducers/equipments'
+import {LIMIT, EQUIPMENT_NUMBER } from "../../constants/SearchTerms";
+
 
 export default function EquipmentsList(props) {
 
-    const selectRef = useRef(null)
     const inputRef = useRef(null)
-    const [searchBy, setSearchBy] = useState('equipmentNumber');
+
+    const data = useSelector((state) => state.equipments.data)
+    const loading = useSelector((state) => state.equipments.loading)
+    const searchBy = useSelector((state) => state.equipments.searchBy)
+    const dispatch = useDispatch()
 
     const onSelected = (e) => {
         console.log("onSelected()")
-        setSearchBy(e.target.value)
+        dispatch(setSearchBy(e.target.value))
     };
 
     const onClicked = (e) => {
         console.log("onClicked()")
-        console.log(selectRef.current.value)
-        console.log(inputRef.current.value)
+        if(searchBy === LIMIT)
+            dispatch(loadEquipments(inputRef.current.value))
+
+        if(searchBy === EQUIPMENT_NUMBER)
+            dispatch(getEquipmentByNumber(inputRef.current.value))
     }
 
     const renderToolbar = () => {
@@ -29,15 +39,15 @@ export default function EquipmentsList(props) {
                 <Form>
                     <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
                         <Col sm="5">
-                            <Form.Select defaultValue="equipmentNumber" ref={selectRef} onChange={(e)=>{onSelected(e)}}>
-                                <option value="limit">Limit</option>
-                                <option value="equipmentNumber">Equipment Number</option>
+                            <Form.Select defaultValue={searchBy} onChange={(e)=>{onSelected(e)}}>
+                                <option value={LIMIT}>Limit</option>
+                                <option value={EQUIPMENT_NUMBER}>Equipment Number</option>
                             </Form.Select>
                         </Col>
                         <Col sm="6">
                             <Form.Control
                                 type="plaintext"
-                                placeholder={searchBy === 'limit' ? 'limit' : 'Equipment Number'}
+                                placeholder={searchBy === LIMIT ? 'limit' : 'Equipment Number'}
                                 ref={inputRef} />
                         </Col>
                         <Col sm="1">
@@ -50,7 +60,7 @@ export default function EquipmentsList(props) {
     }
 
     const renderStocks = () => {
-        return props.equipments.map((q, idx) => {
+        return data.map((q, idx) => {
             return (
                 <tr key={idx}>
                     <td>
@@ -71,7 +81,7 @@ export default function EquipmentsList(props) {
         })
     }
 
-    if (props.loading) {
+    if (loading) {
         return <Spinner animation="border" variant="primary" />
     }
 
