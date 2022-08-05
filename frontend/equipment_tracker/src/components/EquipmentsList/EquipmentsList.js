@@ -11,11 +11,22 @@ class EquipmentsList extends React.Component {
         super(props)
         this.inputRef = React.createRef()
         this.selectRef = React.createRef()
+        this.state = {
+            searchBy: 'equipmentNumber'
+        }
     }
 
     onAddClicked = () => {
         console.log("onAddClicked()")
         console.log("this.inputRef: %s, this.selectRef: %s", this.inputRef.current.value, this.selectRef.current.value)
+    }
+
+    onSelected = (e) => {
+        console.log("onSelected()")
+        console.log("this.target.value: %s", e.target.value)
+        this.setState({
+            searchBy: e.target.value
+        })
     }
 
     renderToolbar = () => {
@@ -24,7 +35,7 @@ class EquipmentsList extends React.Component {
                 <Form>
                     <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
                         <Col sm="5">
-                            <Form.Select ref={this.selectRef} >
+                            <Form.Select defaultValue="equipmentNumber" ref={this.selectRef} onChange={(e)=>{this.onSelected(e)}}>
                                 <option value="limit">Limit</option>
                                 <option value="equipmentNumber">Equipment Number</option>
                             </Form.Select>
@@ -32,7 +43,7 @@ class EquipmentsList extends React.Component {
                         <Col sm="6">
                             <Form.Control
                                 type="plaintext"
-                                placeholder="limit"
+                                placeholder={this.state.searchBy === 'limit' ? 'limit' : 'Equipment Number'}
                                 ref={this.inputRef} />
                         </Col>
                         <Col sm="1">
