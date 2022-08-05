@@ -1,0 +1,23 @@
+export const symbols = [
+    'AMZN',
+    'AMBA',
+    'NVDA',
+    'TSM',
+    'TSLA',
+    'NKE',
+    'BCO',
+    'AIR',
+    'TMO',
+    'LMND',
+    'GOOGL',
+    'NNND',
+    'INTC',
+    'IBM',
+    'VOW3',
+    'FB',
+    'EA',
+    'ATVI',
+    'AMD',
+    'MSF',
+    'KNEBV'
+]
