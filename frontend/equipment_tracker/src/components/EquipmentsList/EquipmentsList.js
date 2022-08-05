@@ -4,38 +4,32 @@ import './EquipmentsList.css';
 import Spinner from 'react-bootstrap/Spinner'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { useState, useEffect, useRef } from 'react';
 
-class EquipmentsList extends React.Component {
+export default function EquipmentsList(props) {
 
-    constructor(props) {
-        super(props)
-        this.inputRef = React.createRef()
-        this.selectRef = React.createRef()
-        this.state = {
-            searchBy: 'equipmentNumber'
-        }
-    }
+    const selectRef = useRef(null)
+    const inputRef = useRef(null)
+    const [searchBy, setSearchBy] = useState('equipmentNumber');
 
-    onAddClicked = () => {
-        console.log("onAddClicked()")
-        console.log("this.inputRef: %s, this.selectRef: %s", this.inputRef.current.value, this.selectRef.current.value)
-    }
-
-    onSelected = (e) => {
+    const onSelected = (e) => {
         console.log("onSelected()")
-        console.log("this.target.value: %s", e.target.value)
-        this.setState({
-            searchBy: e.target.value
-        })
+        setSearchBy(e.target.value)
+    };
+
+    const onClicked = (e) => {
+        console.log("onClicked()")
+        console.log(selectRef.current.value)
+        console.log(inputRef.current.value)
     }
 
-    renderToolbar = () => {
+    const renderToolbar = () => {
         return (
             <Navbar bg="light" expand='sm'>
                 <Form>
                     <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
                         <Col sm="5">
-                            <Form.Select defaultValue="equipmentNumber" ref={this.selectRef} onChange={(e)=>{this.onSelected(e)}}>
+                            <Form.Select defaultValue="equipmentNumber" ref={selectRef} onChange={(e)=>{onSelected(e)}}>
                                 <option value="limit">Limit</option>
                                 <option value="equipmentNumber">Equipment Number</option>
                             </Form.Select>
@@ -43,11 +37,11 @@ class EquipmentsList extends React.Component {
                         <Col sm="6">
                             <Form.Control
                                 type="plaintext"
-                                placeholder={this.state.searchBy === 'limit' ? 'limit' : 'Equipment Number'}
-                                ref={this.inputRef} />
+                                placeholder={searchBy === 'limit' ? 'limit' : 'Equipment Number'}
+                                ref={inputRef} />
                         </Col>
                         <Col sm="1">
-                            <Button variant='outline-info' onClick={(e) => { this.onAddClicked(e) }}>Search</Button>
+                            <Button variant='outline-info' onClick={(e) => { onClicked(e) }}>Search</Button>
                         </Col>
                     </Form.Group>
                 </Form>
@@ -55,8 +49,8 @@ class EquipmentsList extends React.Component {
         )
     }
 
-    renderStocks = () => {
-        return this.props.equipments.map((q, idx) => {
+    const renderStocks = () => {
+        return props.equipments.map((q, idx) => {
             return (
                 <tr key={idx}>
                     <td>
@@ -77,32 +71,28 @@ class EquipmentsList extends React.Component {
         })
     }
 
-    render() {
-        if (this.props.loading) {
-            return <Spinner animation="border" variant="primary" />
-        }
-
-        return (
-            <React.Fragment>
-                {this.renderToolbar()}
-                <Table responsive="sm" hover="true">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Address</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.renderStocks()}
-                    </tbody>
-                </Table>
-            </React.Fragment>
-        )
+    if (props.loading) {
+        return <Spinner animation="border" variant="primary" />
     }
-}
 
-export default EquipmentsList
+    return (
+        <React.Fragment>
+            {renderToolbar()}
+            <Table responsive="sm" hover="true">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Address</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {renderStocks()}
+                </tbody>
+            </Table>
+        </React.Fragment>
+    )
+}
 
