@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { loadEquipments, setSearchBy, getEquipmentByNumber } from '../../reducers/equipments'
+import { getEquipments, setSearchBy, getEquipmentByNumber } from '../../reducers/equipments'
 import {LIMIT, EQUIPMENT_NUMBER } from "../../constants/SearchTerms";
 
 
@@ -27,7 +27,7 @@ export default function EquipmentsList(props) {
     const onClicked = (e) => {
         console.log("onClicked()")
         if(searchBy === LIMIT)
-            dispatch(loadEquipments(inputRef.current.value))
+            dispatch(getEquipments(inputRef.current.value))
 
         if(searchBy === EQUIPMENT_NUMBER)
             dispatch(getEquipmentByNumber(inputRef.current.value))

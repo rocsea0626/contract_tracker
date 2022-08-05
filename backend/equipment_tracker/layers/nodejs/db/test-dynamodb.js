@@ -80,12 +80,13 @@ describe('Tests db functions', function () {
             expect(resp).to.be.empty
 
             const result = await db.getEquipmentByNumber('en_12345')
-            expect(result.Item).to.be.an('object')
+            expect(result).to.be.an('object')
+            expect(result.EquipmentNumber).to.equal('en_12345')
         })
 
         it('Failed, not found', async () => {
             const result = await db.getEquipmentByNumber('fake_equipment_number')
-            expect(result).to.be.empty
+            expect(result).to.be.undefined
         })
 
         it('Failed, equipmentNumber===""', async () => {
