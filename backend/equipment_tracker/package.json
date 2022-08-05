@@ -15,7 +15,7 @@
     "test-get": "env DB_NAME=EquipmentsTable mocha 'handlers/get-equipment/tests/unit/*'",
     "test-dynamodb": "env DB_NAME=EquipmentsTable mocha 'layers/nodejs/db/*'",
     "test-equipments": "env DB_NAME=EquipmentsTable mocha 'handlers/equipments/tests/unit/*'",
-    "integ-test": "mocha 'handlers/get-equipment/tests/integration/*'"
+    "integ-test": "mocha 'handlers/*/tests/integration/*'"
   },
   "devDependencies": {
     "aws-sdk": "^2.815.0",

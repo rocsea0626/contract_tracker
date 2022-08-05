@@ -8,41 +8,6 @@ const expect = chai.expect;
 describe("Test (GET) /equipment/{equipmentNumber}", function () {
   let apiEndpoint;
 
-  const createEquipments = async (apiEndpoint) => {
-    const path = apiEndpoint + "equipment"
-    const e1 = {
-      EquipmentNumber: "it_get_eq_1",
-      Address: "address_1",
-      StartDate: "start_date_1",
-      EndDate: "end_date_1",
-      Status: "Running",
-    }
-    const e2 = {
-      EquipmentNumber: "it_get_eq_2",
-      Address: "address_2",
-      StartDate: "start_date_2",
-      EndDate: "end_date_2",
-      Status: "Stopped",
-    }
-    const e3 = {
-      EquipmentNumber: "it_get_eq_3",
-      Address: "address_3",
-      StartDate: "start_date_3",
-      EndDate: "end_date_3",
-      Status: "Stopped",
-    }
-
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-
-    await axios.post(path, e1, config)
-    await axios.post(path, e2, config)
-    await axios.post(path, e3, config)
-  }
-
   before(async () => {
     apiEndpoint = await testingUtils.getApiEndpoint()
     console.log("apiEndpoint: %s", apiEndpoint)

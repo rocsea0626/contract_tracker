@@ -7,7 +7,7 @@ const expect = chai.expect;
 const sinon = require("sinon")
 const sandbox = sinon.createSandbox()
 
-describe('Tests get equipment, ~/equipment/{equipmentNumber} (GET)', function () {
+describe('Tests get equipment, ~/equipment/search?limit={limit} (GET)', function () {
 
     afterEach(async ()=>{
         sandbox.restore()
@@ -26,7 +26,7 @@ describe('Tests get equipment, ~/equipment/{equipmentNumber} (GET)', function ()
             ]
         )
         const event = {
-            queryParameters: {
+            queryStringParameters: {
                 limit: 3
             }
         }
@@ -57,7 +57,7 @@ describe('Tests get equipment, ~/equipment/{equipmentNumber} (GET)', function ()
             ]
         )
         const event = {
-            queryParameters: {
+            queryStringParameters: {
                 limit: 1
             }
         }
@@ -68,10 +68,25 @@ describe('Tests get equipment, ~/equipment/{equipmentNumber} (GET)', function ()
         expect(equipments[1].StartDate).to.equal("start_date_2")
     })
 
+    it('Successful, return 200, no more items', async () => {
+        sandbox.stub(db, 'getEquipments').resolves(
+            []
+        )
+        const event = {
+            queryStringParameters: {
+                limit: 1
+            }
+        }
+        const resp = await app.lambdaHandler(event, {})
+        expect(resp.statusCode).to.equal(200)
+        const equipments = JSON.parse(resp.body)
+        expect(equipments.length).to.equal(0)
+    })
+
     it('Failed, return 400, bad request, limit is undefined', async () => {
         sandbox.stub(db, 'getEquipments').resolves({})
         const event = {
-            queryParameters: {}
+            queryStringParameters: {}
         }
         const resp = await app.lambdaHandler(event, {})
         expect(resp.statusCode).to.equal(400)
@@ -80,7 +95,7 @@ describe('Tests get equipment, ~/equipment/{equipmentNumber} (GET)', function ()
     it('Failed, return 400, bad request, limit < 1', async () => {
         sandbox.stub(db, 'getEquipments').resolves({})
         const event = {
-            queryParameters: {
+            queryStringParameters: {
                 limit: -1
             }
         }
@@ -91,22 +106,11 @@ describe('Tests get equipment, ~/equipment/{equipmentNumber} (GET)', function ()
     it('Failed, return 400, bad request, limit = "a"', async () => {
         sandbox.stub(db, 'getEquipments').resolves({})
         const event = {
-            queryParameters: {
+            queryStringParameters: {
                 limit: "a"
             }
         }
         const resp = await app.lambdaHandler(event, {})
         expect(resp.statusCode).to.equal(400)
-    })
-
-    it('Failed, return 404, not found', async () => {
-        sandbox.stub(db, 'getEquipments').resolves([])
-        const event = {
-            queryParameters: {
-                limit: 10
-            }
-        }
-        const resp = await app.lambdaHandler(event, {})
-        expect(resp.statusCode).to.equal(404)
     })
 });

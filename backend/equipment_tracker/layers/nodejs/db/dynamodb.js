@@ -82,7 +82,7 @@ exports.getEquipments = async (limit) => {
     }
     const result = await getDocumentClient().scan(params).promise()
     console.log("getEquipments(), result: %s", JSON.stringify(result))
-    return result
+    return result.Items
 }
 
 exports.createTable = async () => {

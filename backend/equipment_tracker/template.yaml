@@ -20,6 +20,23 @@ Globals:
         DB_NAME: !Ref EquipmentsTable
 
 Resources:
+  EquipmentsSearch:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/equipments/
+      Events:
+        EquipmentsSearch:
+          Type: Api
+          Properties:
+            Path: /equipment/search
+            RequestParameters:
+              - method.request.querystring.limit:
+                  Required: true
+            Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref EquipmentsTable
+
   GetEquipment:
     Type: AWS::Serverless::Function
     Properties:
@@ -144,6 +161,12 @@ Outputs:
   GetEquipmentIamRole:
     Description: "Implicit IAM Role created for GetEquipment function"
     Value: !GetAtt GetEquipmentRole.Arn
+  EquipmentsSearch:
+    Description: "EquipmentsSearch Function ARN"
+    Value: !GetAtt EquipmentsSearch.Arn
+  EquipmentsSearchIamRole:
+    Description: "Implicit IAM Role created for EquipmentsSearch function"
+    Value: !GetAtt EquipmentsSearchRole.Arn
   DeleteEquipment:
     Description: "DeleteEquipment Function ARN"
     Value: !GetAtt DeleteEquipment.Arn

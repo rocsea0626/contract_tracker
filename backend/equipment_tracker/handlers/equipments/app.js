@@ -6,19 +6,15 @@ const utils  = require(process.env.AWS_EXECUTION_ENV ? '/opt/utils/utils' : '../
  */
 exports.lambdaHandler = async (event, context) => {
     try {
-        const limit = event.queryParameters.limit
-        if(!limit || limit < 1 || typeof limit !== 'number'){
+        console.log("event.queryParameters: %s", JSON.stringify(event.queryStringParameters))
+        const limit = utils.parseQueryStringLimit(event.queryStringParameters.limit)
+        if(!limit || limit < 1){
             const error = new Error(`invalid request, limit: ${limit}`)
             console.error(error)
             return utils.badRequestResponse(error)
         }
 
         const equipments = await db.getEquipments(limit)
-        if(!equipments || equipments.length <=0){
-            const error = new Error(`not found by limit: ${limit}`)
-            console.error(error)
-            return utils.notFoundResponse(error)
-        }
         return utils.okResponse(equipments)
     } catch (err) {
         console.error(err)

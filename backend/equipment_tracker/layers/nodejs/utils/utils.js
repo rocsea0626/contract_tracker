@@ -11,6 +11,10 @@ exports.getDynamodbTableName = () => {
     return tableName;
 }
 
+exports.parseQueryStringLimit = (limit) => {
+    return isNaN(parseInt(limit)) ? undefined : parseInt(limit)
+}
+
 exports.parseRequest = (event) => {
     console.log("parseRequest(event.body: %s)", event.body)
     const equipment = JSON.parse(event.body)

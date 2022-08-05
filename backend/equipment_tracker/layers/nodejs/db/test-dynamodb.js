@@ -142,10 +142,13 @@ describe('Tests db functions', function () {
             expect(resp3).to.be.empty
 
             const result = await db.getEquipments(2)
-            expect(result).to.be.an('object')
-            expect(result.Count).to.equal(2)
-            expect(result.Items[0].EquipmentNumber).to.equal("en_34567")
-            expect(result.Items[1].EquipmentNumber).to.equal("en_23456")
+            expect(result[0].EquipmentNumber).to.equal("en_34567")
+            expect(result[1].EquipmentNumber).to.equal("en_23456")
+        })
+
+        it('Successful, no more items', async () => {
+            const result = await db.getEquipments(2)
+            expect(result.length).to.equal(0)
         })
 
         it('Failed, limit is negative', async () => {
