@@ -62,7 +62,7 @@ export const getEquipmentByNumber = (equipmentNumber) => async (dispatch) => {
         dispatch(equipmentsFetchStarts())
         const res = await fetchEquipmentByNumber(equipmentNumber)
         console.log(res.data)
-        dispatch(equipmentsFetched([].concat(res.data.Item)))
+        dispatch(equipmentsFetched([].concat(res.data)))
     } catch (err) {
         console.log("getEquipmentByNumber() failed with statusCode: %s", err.response.status)
         dispatch(equipmentsFetchFailed(err.response))
