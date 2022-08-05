@@ -1,0 +1,184 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  equipment_tracker
+
+  Sample SAM Template for equipment_tracker
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Layers:
+    - !Ref CommonLayer
+    Handler: app.lambdaHandler
+    Runtime: nodejs12.x
+    Architectures:
+      - x86_64
+    Timeout: 3
+    Environment:
+      Variables:
+        DB_NAME: !Ref EquipmentsTable
+
+Resources:
+  EquipmentsSearch:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/equipments/
+      Events:
+        EquipmentsSearch:
+          Type: Api
+          Properties:
+            Path: /equipment/search
+            RequestParameters:
+              - method.request.querystring.limit:
+                  Required: true
+            Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref EquipmentsTable
+
+  GetEquipment:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/get-equipment/
+      Events:
+        GetEquipment:
+          Type: Api
+          Properties:
+            Path: /equipment/{equipmentNumber}
+            Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref EquipmentsTable
+
+  DeleteEquipment:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/get-equipment/
+      Events:
+        GetEquipment:
+          Type: Api
+          Properties:
+            Path: /equipment/{equipmentNumber}
+            Method: delete
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref EquipmentsTable
+
+  CreateEquipment:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/create-equipment/
+      Events:
+        CreateEquipment:
+          Type: Api
+          Properties:
+            Path: /equipment
+            Method: post
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref EquipmentsTable
+  Health:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: handlers/health/
+      Events:
+        CreateEquipment:
+          Type: Api
+          Properties:
+            Path: /health
+            Method: any
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:PutItem
+            Resource: !GetAtt
+              - EquipmentsTable
+              - Arn
+
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: hello-world/
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
+
+  CommonLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: equiement-tracker-dependencies
+      Description: Common dependencies for lambdas
+      ContentUri: layers/nodejs
+      CompatibleRuntimes:
+        - nodejs12.x
+      RetentionPolicy: Retain
+
+  EquipmentsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    Properties:
+      TableName: EquipmentsTable
+      AttributeDefinitions:
+        - AttributeName: EquipmentNumber
+          AttributeType: S
+      KeySchema:
+        - AttributeName: EquipmentNumber
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 1
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ApiEndpointUrl:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
+  Health:
+    Description: "Health check ARN"
+    Value: !GetAtt Health.Arn
+  HealthIamRole:
+    Description: "Implicit IAM Role created for Health function"
+    Value: !GetAtt HealthRole.Arn
+  CommonLayer:
+    Description: "CommonLayer Function ARN"
+    Value: !Ref CommonLayer
+  GetEquipment:
+    Description: "GetEquipment Function ARN"
+    Value: !GetAtt GetEquipment.Arn
+  GetEquipmentIamRole:
+    Description: "Implicit IAM Role created for GetEquipment function"
+    Value: !GetAtt GetEquipmentRole.Arn
+  EquipmentsSearch:
+    Description: "EquipmentsSearch Function ARN"
+    Value: !GetAtt EquipmentsSearch.Arn
+  EquipmentsSearchIamRole:
+    Description: "Implicit IAM Role created for EquipmentsSearch function"
+    Value: !GetAtt EquipmentsSearchRole.Arn
+  DeleteEquipment:
+    Description: "DeleteEquipment Function ARN"
+    Value: !GetAtt DeleteEquipment.Arn
+  DeleteEquipmentIamRole:
+    Description: "Implicit IAM Role created for DeleteEquipment function"
+    Value: !GetAtt DeleteEquipmentRole.Arn
+  CreateEquipment:
+    Description: "CreateEquipment Function ARN"
+    Value: !GetAtt CreateEquipment.Arn
+  CreateEquipmentIamRole:
+    Description: "Implicit IAM Role created for CreateEquipment function"
+    Value: !GetAtt CreateEquipmentRole.Arn
+  EquipmentsTableName:
+    Description: "Name of created database table"
+    Value: !Select [ 1, !Split [ '/', !GetAtt EquipmentsTable.Arn ] ]
