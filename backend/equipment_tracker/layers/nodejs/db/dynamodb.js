@@ -49,7 +49,7 @@ exports.getEquipmentByNumber = async (equipmentNumber) => {
     try{
         const result = await getDocumentClient().get(params).promise()
         console.log("getEquipmentByNumber(), result: %s", JSON.stringify(result))
-        return result
+        return result.Item
     } catch (err) {
         console.log(err)
         throw err
