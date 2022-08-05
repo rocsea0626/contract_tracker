@@ -1,10 +1,16 @@
 import './App.css';
-import Header from "../Header/Header";
+import {
+    Header,
+    EquipmentsList
+} from "../../components";
+import {equipments} from "../../data/mock/data";
+
 
 function App() {
   return (
     <div className="App">
       <Header />
+      <EquipmentsList equipments={equipments}/>
     </div>
   );
 }
