@@ -1,18 +1,7 @@
 .PHONY: install
 
-DOCKER_COMPOSE_FILE="./tools/docker-compose.yaml"
-
-populate-dynamodb:
-	node tools/gen-fake-data.js
-
-local-start:
-	docker-compose --file ${DOCKER_COMPOSE_FILE} up
-
-local-stop:
-	docker-compose --file ${DOCKER_COMPOSE_FILE} down
-
-local-rebuild:
-	docker-compose --file ${DOCKER_COMPOSE_FILE} build
+deploy:
+	./deploy.sh
 
 # easier to read locally
 unit-test:

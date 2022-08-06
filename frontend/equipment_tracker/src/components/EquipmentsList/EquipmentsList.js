@@ -1,5 +1,11 @@
 import * as React from "react";
-import {Table, Badge, Navbar, Form, FormControl, Button, ButtonGroup, ToggleButton, FormGroup} from 'react-bootstrap';
+import {
+    Table,
+    Navbar,
+    Form,
+    Button,
+    Card
+} from 'react-bootstrap';
 import './EquipmentsList.css';
 import Spinner from 'react-bootstrap/Spinner'
 import Row from 'react-bootstrap/Row';
@@ -8,16 +14,17 @@ import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { getEquipments, setSearchBy, getEquipmentByNumber } from '../../reducers/equipments'
 import {LIMIT, EQUIPMENT_NUMBER } from "../../constants/SearchTerms";
+import {Error} from "../../components"
 
 
 export default function EquipmentsList(props) {
-
-    const inputRef = useRef(null)
-
     const data = useSelector((state) => state.equipments.data)
+    const error = useSelector((state) => state.equipments.error)
     const loading = useSelector((state) => state.equipments.loading)
     const searchBy = useSelector((state) => state.equipments.searchBy)
     const dispatch = useDispatch()
+
+    const inputRef = useRef(searchBy)
 
     const onSelected = (e) => {
         console.log("onSelected()")
@@ -59,26 +66,58 @@ export default function EquipmentsList(props) {
         )
     }
 
-    const renderStocks = () => {
+    const renderEquipments = () => {
         return data.map((q, idx) => {
             return (
-                <tr key={idx}>
-                    <td>
+                <tr key={"key_tr_en_" + idx}>
+                    <td key={"key_td_en_" + idx}>
                         {q.EquipmentNumber}
                     </td>
-                    <td>{q.Address}</td>
-                    <td>
-                        {q.StartDate}
+                    <td key={"key_td_addr_" + idx}>
+                        {q.Address}
                     </td>
-                    <td>
-                        {q.EndDate}
+                    <td key={"key_td_sd_" + idx}>
+                        {"" + q.StartDate}
                     </td>
-                    <td>
+                    <td key={"key_td_ed_" + idx}>
+                        {"" + q.EndDate}
+                    </td>
+                    <td key={"key_td_st_" + idx}>
                         {q.Status}
                     </td>
                 </tr>
             )
         })
+    }
+
+    const renderTable = () => {
+      if(error){
+          return null
+      }
+      if(data.length === 0) {
+          return (
+              <Card>
+                  <Card.Header>No data </Card.Header>
+              </Card>
+          )
+      }
+
+      return (
+          <Table responsive="sm" hover="true">
+              <thead>
+              <tr>
+                  <th>#</th>
+                  <th>Address</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Status</th>
+              </tr>
+              </thead>
+              <tbody>
+              {renderEquipments()}
+              </tbody>
+          </Table>
+      )
     }
 
     if (loading) {
@@ -88,20 +127,8 @@ export default function EquipmentsList(props) {
     return (
         <React.Fragment>
             {renderToolbar()}
-            <Table responsive="sm" hover="true">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Address</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {renderStocks()}
-                </tbody>
-            </Table>
+            <Error/>
+            {renderTable()}
         </React.Fragment>
     )
 }
