@@ -1,7 +1,8 @@
 import './App.css';
 import {
     Header,
-    EquipmentsList
+    EquipmentsList,
+    Error
 } from "../../components";
 import {equipments} from "../../data/mock/data";
 

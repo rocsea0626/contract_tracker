@@ -15,8 +15,6 @@ AWS ApiGateway + Lambda + Dynamodb (Cognito, Pipeline)
 
 ## Road map
 - implement backend
-  - faker data
-  - script to populate deployment ENV vars
   - implement request validation in API gateway ?
   - api doc generation ?
 - implement frontend

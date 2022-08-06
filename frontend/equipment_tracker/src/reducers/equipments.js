@@ -9,7 +9,7 @@ export const equipmentsSlice = createSlice({
         loading: false,
         data: [],
         error: undefined,
-        limit: 3,
+        limit: 10,
         searchBy: LIMIT
     },
     reducers: {
@@ -23,6 +23,7 @@ export const equipmentsSlice = createSlice({
         },
         equipmentsFetched: (state, action) => {
             console.log("equipmentsFetched()")
+            // console.log(action.payload)
             state.data = action.payload
             state.loading = false
         },
@@ -48,24 +49,36 @@ export const getEquipments = (limit) => async (dispatch) => {
     try{
         dispatch(equipmentsFetchStarts())
         const res = await fetchEquipments(limit)
-        console.log(res.data)
         dispatch(equipmentsFetched(res.data))
     } catch (err) {
         console.log("getEquipments() failed with statusCode: %s", err.response.status)
-        dispatch(equipmentsFetchFailed(err.response))
+        dispatch(equipmentsFetchFailed({
+            statusCode: err.response.status,
+            message: err.response.data
+        }))
     }
 }
 
 export const getEquipmentByNumber = (equipmentNumber) => async (dispatch) => {
     console.log("getEquipmentByNumber(equipmentNumber: %s)", equipmentNumber)
     try{
+        if(!equipmentNumber){
+            dispatch(equipmentsFetchFailed({
+                statusCode: "400",
+                message: "equipmentNumber is missing"
+            }))
+            return
+        }
         dispatch(equipmentsFetchStarts())
         const res = await fetchEquipmentByNumber(equipmentNumber)
         console.log(res.data)
         dispatch(equipmentsFetched([].concat(res.data)))
     } catch (err) {
         console.log("getEquipmentByNumber() failed with statusCode: %s", err.response.status)
-        dispatch(equipmentsFetchFailed(err.response))
+        dispatch(equipmentsFetchFailed({
+            statusCode: err.response.status,
+            message: err.response.data
+        }))
     }
 }
 
