@@ -14,26 +14,23 @@ AWS ApiGateway + Lambda + Dynamodb (Cognito, Pipeline)
   - integration test
 
 ## Road map
-- setup local dev env
-  - SAM local + Dynamodb local 
-- implement lambdas + unit tests
-
-- setup deployment env
-  - setup SAM for deployment
-
+- implement backend
+  - faker data
+  - script to populate deployment ENV vars
+  - implement request validation in API gateway ?
+  - api doc generation ?
 - implement frontend
+  - Error component
+  - initial load data
+  - unit test
 
 
 
 ## TODO
 - timestamp format
-- log in as a different user
+- log into AWS console with dev user
 - ready about create class in Nodejs
-- implement data schema check in API gateway ?
-- api doc generation ?
 - pagination ?
 - allow API key
-- allow data encryption with SSL
 - allow integration test with Code Pipeline
 - hide DELETE from Prod stage
-- log into AWS console with dev user
