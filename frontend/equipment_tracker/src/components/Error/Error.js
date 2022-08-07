@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card } from 'react-bootstrap'
+import { Alert } from 'react-bootstrap'
 import {useSelector} from "react-redux";
 
 
@@ -8,11 +8,9 @@ export default function Error() {
 
     if (error){
         return (
-            <Card>
-                <Card.Header>Error: </Card.Header>
-                <Card.Body>Status Code:{error.statusCode}</Card.Body>
-                <Card.Body>Message: {error.message}</Card.Body>
-            </Card>
+            <Alert key='warning' variant='warning'>
+                Status Code:{error.statusCode}. Message: {error.message}
+            </Alert>
         )
     }
 

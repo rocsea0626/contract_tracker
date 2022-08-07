@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {equipments} from "../data/mock/data";
 import {LIMIT } from "../constants/SearchTerms";
 import {fetchEquipments, fetchEquipmentByNumber} from "../api"
 
