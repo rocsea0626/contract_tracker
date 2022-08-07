@@ -122,7 +122,7 @@ Resources:
 Outputs:
   ApiEndpointUrl:
     Description: "API Gateway endpoint URL for Prod stage"
-    Value: !Sub "https://${EquipmentTrackerApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Value: !Sub "https://${EquipmentTrackerApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
   Health:
     Description: "Health check ARN"
     Value: !GetAtt Health.Arn

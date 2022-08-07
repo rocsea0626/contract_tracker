@@ -20,6 +20,7 @@ AWS ApiGateway + Lambda + Dynamodb (Cognito, Pipeline)
 - implement frontend
   - footer
   - unit test
+  - allow API key
 
 
 
@@ -29,6 +30,5 @@ AWS ApiGateway + Lambda + Dynamodb (Cognito, Pipeline)
 - log into AWS console with dev user
 - ready about create class in Nodejs
 - pagination ?
-- allow API key
 - allow integration test with Code Pipeline
 - hide DELETE from Prod stage

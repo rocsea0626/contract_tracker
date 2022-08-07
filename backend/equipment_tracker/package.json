@@ -11,11 +11,8 @@
   },
   "scripts": {
     "test": "env DB_NAME=EquipmentsTable mocha 'handlers/*/tests/unit/*' 'layers/nodejs/*/*'",
-    "test-create-equipment": "env DB_NAME=EquipmentsTable mocha 'handlers/create-equipment/tests/unit/*'",
-    "test-get": "env DB_NAME=EquipmentsTable mocha 'handlers/get-equipment/tests/unit/*'",
-    "test-dynamodb": "env DB_NAME=EquipmentsTable mocha 'layers/nodejs/db/*'",
-    "test-equipments": "env DB_NAME=EquipmentsTable mocha 'handlers/equipments/tests/unit/*'",
-    "integ-test": "mocha 'handlers/*/tests/integration/*'"
+    "integ-test": "mocha 'handlers/*/tests/integration/*'",
+    "put-items-dynamodb": "env AMOUNT=100 node tools/gen-fake-data.js"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.3.0",
@@ -26,6 +23,6 @@
     "sinon": "^14.0.0"
   },
   "jest": {
-    "testTimeout": 15000
+    "testTimeout": 20000
   }
 }
