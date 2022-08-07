@@ -15,17 +15,17 @@ AWS ApiGateway + Lambda + Dynamodb (Cognito, Pipeline)
 
 ## Road map
 - implement backend
-  - implement request validation in API gateway ?
-  - api doc generation ?
+  - setup env var with SAM template output
+  - .env for package json
 - implement frontend
-  - Error component
-  - initial load data
+  - footer
   - unit test
 
 
 
 ## TODO
 - timestamp format
+- rest API vs HTTP api
 - log into AWS console with dev user
 - ready about create class in Nodejs
 - pagination ?

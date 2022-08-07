@@ -31,7 +31,8 @@ sam deploy \
   --region "$AWS_REGION"  \
   --no-fail-on-empty-changeset \
   --parameter-overrides \
-  StackName="$STACK_NAME"
+  StackName="$STACK_NAME" \
+  Stage="$BUILD_SUFFIX"
 
 
 
