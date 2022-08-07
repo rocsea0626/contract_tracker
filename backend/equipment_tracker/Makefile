@@ -5,13 +5,13 @@ DOCKER_COMPOSE_FILE="./tools/docker-compose.yaml"
 populate-dynamodb:
 	node tools/gen-fake-data.js
 
-local-start:
+start-local-dynamodb:
 	docker-compose --file ${DOCKER_COMPOSE_FILE} up
 
-local-stop:
+stop-local-dynamodb:
 	docker-compose --file ${DOCKER_COMPOSE_FILE} down
 
-local-rebuild:
+rebuild-local-dynamodb:
 	docker-compose --file ${DOCKER_COMPOSE_FILE} build
 
 # easier to read locally
