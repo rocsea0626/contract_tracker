@@ -4,20 +4,21 @@ import {
     Navbar,
     Form,
     Button,
-    Card
+    Alert,
+    Container
 } from 'react-bootstrap';
 import './EquipmentsList.css';
 import Spinner from 'react-bootstrap/Spinner'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { getEquipments, setSearchBy, getEquipmentByNumber } from '../../reducers/equipments'
 import {LIMIT, EQUIPMENT_NUMBER } from "../../constants/SearchTerms";
 import {Error} from "../../components"
 
 
-export default function EquipmentsList(props) {
+export default function EquipmentsList() {
     const data = useSelector((state) => state.equipments.data)
     const error = useSelector((state) => state.equipments.error)
     const loading = useSelector((state) => state.equipments.loading)
@@ -69,7 +70,7 @@ export default function EquipmentsList(props) {
         return data.map((q, idx) => {
             return (
                 <tr data-testid='equipment_row' key={"key_tr_en_" + idx}>
-                    <td key={"key_td_en_" + idx}>
+                    <td key={"key_td_en_" + idx} className="id_cell">
                         {q.EquipmentNumber}
                     </td>
                     <td key={"key_td_addr_" + idx}>
@@ -81,7 +82,7 @@ export default function EquipmentsList(props) {
                     <td key={"key_td_ed_" + idx}>
                         {"" + q.EndDate}
                     </td>
-                    <td key={"key_td_st_" + idx}>
+                    <td key={"key_td_st_" + idx} className={q.Status==='Running' ? "green_cell" : "red_cell"}>
                         {q.Status}
                     </td>
                 </tr>
@@ -95,9 +96,9 @@ export default function EquipmentsList(props) {
       }
       if(data.length === 0) {
           return (
-              <Card>
-                  <Card.Header>No data </Card.Header>
-              </Card>
+              <Alert key='primary' variant='primary'>
+                  No Data
+              </Alert>
           )
       }
 
@@ -120,7 +121,15 @@ export default function EquipmentsList(props) {
     }
 
     if (loading) {
-        return <Spinner animation="border" variant="primary" />
+        return (
+            <Container id="loading-animation">
+                <Row className="justify-content-md-center">
+                    <Col>
+                        <Spinner animation="border" variant="primary" />
+                    </Col>
+                </Row>
+            </Container>
+        )
     }
 
     return (

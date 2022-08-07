@@ -14,3 +14,20 @@ td.decrease{
 td.increase{
   color: green;
 }
+
+#loading-animation{
+  margin: 20pt;
+}
+
+td.id_cell{
+  color: #0a58ca;
+}
+
+td.red_cell{
+  color: #a52834;
+  font-weight: bold;
+}
+
+td.green_cell{
+  color: #0f5132;
+}
