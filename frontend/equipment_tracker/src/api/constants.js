@@ -25,6 +25,6 @@ export const API = {
         }
     },
     aws: {
-        baseUrl: "https://2s7ahmz5i1.execute-api.eu-central-1.amazonaws.com/Prod/",
+        baseUrl: process.env.REACT_APP_API_GATEWAY_URL,
     }
 }

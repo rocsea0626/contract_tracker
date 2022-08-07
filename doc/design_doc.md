@@ -15,12 +15,10 @@ AWS ApiGateway + Lambda + Dynamodb (Cognito, Pipeline)
 
 ## Road map
 - implement backend
-  - setup env var with SAM template output
-  - .env for package json
+  - allow API key
 - implement frontend
   - footer
   - unit test
-  - allow API key
 
 
 
