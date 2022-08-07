@@ -2,7 +2,7 @@ import './App.css';
 import {
     Header,
     EquipmentsList,
-    Error
+    Footer
 } from "../../components";
 import {equipments} from "../../data/mock/data";
 
@@ -12,6 +12,7 @@ function App() {
     <div className="App">
       <Header />
       <EquipmentsList equipments={equipments}/>
+      <Footer />
     </div>
   );
 }

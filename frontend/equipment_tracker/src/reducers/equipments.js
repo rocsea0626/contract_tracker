@@ -47,10 +47,18 @@ export const { equipmentsFetched, equipmentsFetchStarts, setSearchBy, equipments
 export const getEquipments = (limit) => async (dispatch) => {
     console.log("getEquipments(limit: %s)", limit)
     try{
+        if(!limit){
+            dispatch(equipmentsFetchFailed({
+                statusCode: "400",
+                message: "limit is missing"
+            }))
+            return
+        }
         dispatch(equipmentsFetchStarts())
         const res = await fetchEquipments(limit)
         dispatch(equipmentsFetched(res.data))
     } catch (err) {
+        console.log(err)
         console.log("getEquipments() failed with statusCode: %s", err.response.status)
         dispatch(equipmentsFetchFailed({
             statusCode: err.response.status,
