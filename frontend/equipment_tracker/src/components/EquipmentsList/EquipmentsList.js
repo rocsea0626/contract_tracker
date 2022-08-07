@@ -32,7 +32,6 @@ export default function EquipmentsList(props) {
     };
 
     const onClicked = (e) => {
-        console.log("onClicked()")
         if(searchBy === LIMIT)
             dispatch(getEquipments(inputRef.current.value))
 
