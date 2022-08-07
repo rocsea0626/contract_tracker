@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { API } from './constants'
+
+let client = undefined
 
 const getHeaders = () => {
     return {
@@ -8,16 +9,25 @@ const getHeaders = () => {
     }
 }
 
+export const getClient = () =>{
+    if(!client){
+        client = axios.create({
+            baseURL: process.env.REACT_APP_API_GATEWAY_URL,
+            headers: getHeaders()
+        })
+    }
+    return client
+}
+
 export function fetchEquipments(limit) {
     const relativePath = 'equipment/search'
 
-    return axios.get(
-        API.aws.baseUrl + relativePath,
+    return getClient().get(
+        relativePath,
         {
             params: {
                 "limit": limit,
             },
-            headers: getHeaders()
         }
     )
 }
@@ -25,8 +35,8 @@ export function fetchEquipments(limit) {
 export function fetchEquipmentByNumber(equipmentNumber) {
     const relativePath = 'equipment/'+equipmentNumber
 
-    return axios.get(
-        API.aws.baseUrl + relativePath,
+    return getClient().get(
+        relativePath,
         {
             headers: getHeaders()
         }

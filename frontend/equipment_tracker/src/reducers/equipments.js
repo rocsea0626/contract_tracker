@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {equipments} from "../data/mock/data";
 import {LIMIT } from "../constants/SearchTerms";
 import {fetchEquipments, fetchEquipmentByNumber} from "../api"
 
@@ -26,6 +25,7 @@ export const equipmentsSlice = createSlice({
             // console.log(action.payload)
             state.data = action.payload
             state.loading = false
+            state.error = undefined
         },
         equipmentsFetchStarts: (state) => {
             console.log("equipmentsFetchStarts()")

@@ -43,6 +43,9 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.3.0",
-    "json-loader": "^0.5.7"
+    "axios-mock-adapter": "^1.21.1",
+    "json-loader": "^0.5.7",
+    "redux-mock-store": "^1.5.4",
+    "redux-thunk": "^2.4.1"
   }
 }

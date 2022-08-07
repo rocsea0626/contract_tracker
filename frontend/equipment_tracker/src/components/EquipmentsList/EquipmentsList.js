@@ -32,7 +32,6 @@ export default function EquipmentsList(props) {
     };
 
     const onClicked = (e) => {
-        console.log("onClicked()")
         if(searchBy === LIMIT)
             dispatch(getEquipments(inputRef.current.value))
 
@@ -46,7 +45,7 @@ export default function EquipmentsList(props) {
                 <Form>
                     <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
                         <Col sm="5">
-                            <Form.Select defaultValue={searchBy} onChange={(e)=>{onSelected(e)}}>
+                            <Form.Select defaultValue={searchBy} data-testid='select_search_by' onChange={(e)=>{onSelected(e)}}>
                                 <option value={LIMIT}>Limit</option>
                                 <option value={EQUIPMENT_NUMBER}>Equipment Number</option>
                             </Form.Select>
@@ -69,7 +68,7 @@ export default function EquipmentsList(props) {
     const renderEquipments = () => {
         return data.map((q, idx) => {
             return (
-                <tr key={"key_tr_en_" + idx}>
+                <tr data-testid='equipment_row' key={"key_tr_en_" + idx}>
                     <td key={"key_td_en_" + idx}>
                         {q.EquipmentNumber}
                     </td>
