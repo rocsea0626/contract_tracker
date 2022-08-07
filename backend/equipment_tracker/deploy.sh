@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export PROJECT_NAME="equipemnt-tracker"
+export PROJECT_NAME="equipment-tracker"
 export BUILD_SUFFIX="dev"
 export STACK_NAME="$PROJECT_NAME-$BUILD_SUFFIX"
 export AWS_REGION="eu-central-1"
@@ -33,6 +33,10 @@ sam deploy \
   --parameter-overrides \
   StackName="$STACK_NAME" \
   Stage="$BUILD_SUFFIX"
+
+echo "Run integration test"
+#AWS_SAM_STACK_NAME=equipment-tracker-dev AWS_REGION=eu-central-1 npm run integ-test
+AWS_SAM_STACK_NAME="$STACK_NAME" AWS_REGION="$AWS_REGION" npm run integ-test
 
 
 

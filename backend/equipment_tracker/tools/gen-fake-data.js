@@ -3,6 +3,7 @@ const fs = require("fs")
 const path = require("path")
 const AWS = require('aws-sdk')
 const generateEquipments = (amount) => {
+    console.log("generateEquipments(amount: %d)", amount)
     const equipments = []
     for (let i = 0; i<amount; i++){
         equipments.push({
@@ -64,7 +65,7 @@ const batchWriteToDynamodb = async (dataSet) => {
 (async () => {
     try {
         console.log("Uploading data into Dynamodb...")
-        const equipments = generateEquipments(100)
+        const equipments = generateEquipments(process.env.AMOUNT)
         const data = generateDynamodbInputFile(equipments)
         await batchWriteToDynamodb(data)
         console.log("Uploading complete")

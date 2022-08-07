@@ -1,6 +1,8 @@
-.PHONY: install
+.PHONY: populate-dynamodb
 
 DOCKER_COMPOSE_FILE="./tools/docker-compose.yaml"
+
+
 
 populate-dynamodb:
 	node tools/gen-fake-data.js

@@ -96,6 +96,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/definitions/ErrorResponse'
+    delete:
+      summary: Delete one specific equipment by equipment number
+      parameters:
+        - in: path
+          name: equipmentNumber
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        credentials:
+          Fn::Sub: '${EquipmentTrackerApiRole.Arn}'
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteEquipment.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        requestParameters:
+          integration.request.path.equipmentNumber: "method.request.path.equipmentNumber"
+      responses:
+        200:
+          description: Return one specific equipment
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/EquipmentsSearchResponse'
+        404:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/ErrorResponse'
   /equipment:
     post:
       summary: Create an equipment
