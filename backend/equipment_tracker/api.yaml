@@ -1,0 +1,208 @@
+---
+swagger: '2.0'
+info:
+  title:
+    Fn::Sub: "${StackName}"
+  version: 1.0.0
+schemes:
+  - https
+produces:
+  - application/json
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+  params-only:
+    validateRequestBody: false
+    validateRequestParameters: true
+x-amazon-apigateway-request-validator: params-only
+paths:
+  /health:
+    get:
+      summary: Rest API health check endpoint
+      x-amazon-apigateway-integration:
+        credentials:
+          Fn::Sub: '${EquipmentTrackerApiRole.Arn}'
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Health.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+
+  /equipment/search:
+    get:
+      summary: Find a list of equipments
+      parameters:
+      - in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        description: Max number of items will be returned
+      x-amazon-apigateway-integration:
+        credentials:
+          Fn::Sub: '${EquipmentTrackerApiRole.Arn}'
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${EquipmentsSearch.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        requestParameters:
+          integration.request.querystring.type: "method.request.querystring.limit"
+      responses:
+        200:
+          description: Return list of equipments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  - $ref: '#/definitions/EquipmentsSearchResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/ErrorResponse'
+  /equipment/{equipmentNumber}:
+    get:
+      summary: Get one specific equipment by equipment number
+      parameters:
+        - in: path
+          name: equipmentNumber
+          required: true
+          schema:
+            type: string
+      x-amazon-apigateway-integration:
+        credentials:
+          Fn::Sub: '${EquipmentTrackerApiRole.Arn}'
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetEquipment.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+        requestParameters:
+          integration.request.path.equipmentNumber: "method.request.path.equipmentNumber"
+      responses:
+        200:
+          description: Return one specific equipment
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/EquipmentsSearchResponse'
+        404:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/ErrorResponse'
+  /equipment:
+    post:
+      summary: Create an equipment
+      x-amazon-apigateway-request-validator: all
+      parameters:
+        - in: body
+          name: CreateEquipmentRequest
+          required: true
+          schema:
+            "$ref": "#/definitions/CreateEquipmentRequest"
+      x-amazon-apigateway-integration:
+        credentials:
+          Fn::Sub: '${EquipmentTrackerApiRole.Arn}'
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateEquipment.Arn}/invocations"
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: aws_proxy
+      responses:
+        201:
+          description: Equipment is created
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/CreateSubjectResponse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/ErrorResponse'
+        409:
+          description: Equipment already exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/ErrorResponse'
+definitions:
+  CreateEquipmentRequest:
+    type: object
+    properties:
+      EquipmentNumber:
+        type: string
+      StartDate:
+        type: string
+      EndDate:
+        type: string
+      Status:
+        type: string
+      Address:
+        type: string
+    required:
+      - EquipmentNumber
+      - StartDate
+      - EndDate
+      - Status
+      - Address
+  EquipmentsSearchResponse:
+    type: object
+    properties:
+      EquipmentNumber:
+        type: string
+      StartDate:
+        type: string
+      EndDate:
+        type: string
+      Status:
+        type: string
+      Address:
+        type: string
+    required:
+      - EquipmentNumber
+      - StartDate
+      - EndDate
+      - Status
+      - Address
+  RequestBodyModel:
+    type: object
+    properties:
+      id:
+        type: integer
+      type:
+        type: string
+        enum:
+          - dog
+          - cat
+          - fish
+      name:
+        type: string
+      price:
+        type: number
+        minimum: 25
+        maximum: 500
+    required:
+      - type
+      - name
+      - price
+  ErrorResponse:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    required:
+      - statusCode
+      - message
+  Error:
+    type: object
+    properties: {}

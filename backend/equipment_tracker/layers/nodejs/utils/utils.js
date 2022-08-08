@@ -36,23 +36,23 @@ exports.parseRequest = (event) => {
     return equipment
 }
 
+const getHeaders = () => {
+    return {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Methods": "*",
+    }
+}
+
 const getLambdaResponse = (statusCode, object) => ({
     statusCode,
-    headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "ANY",
-    },
+    headers: getHeaders(),
     body: JSON.stringify(object),
 });
 
 const errorResponse = (statusCode, errorObj) => ({
     statusCode,
-    headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "ANY",
-    },
+    headers: getHeaders(),
     body: errorObj.message,
 })
 

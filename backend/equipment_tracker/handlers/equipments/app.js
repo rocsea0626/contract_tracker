@@ -14,7 +14,7 @@ exports.lambdaHandler = async (event, context) => {
             return utils.badRequestResponse(error)
         }
 
-        const equipments = await db.getEquipments(limit)
+        const equipments = await db.getEquipments(event.queryStringParameters.limit)
         return utils.okResponse(equipments)
     } catch (err) {
         console.error(err)

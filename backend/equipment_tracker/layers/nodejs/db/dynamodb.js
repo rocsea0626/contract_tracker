@@ -30,9 +30,6 @@ exports.createEquipment = async (equipment) => {
         TableName: utils.getDynamodbTableName(),
         ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
     }
-    // console.log("createEquipment(), params: %s", JSON.stringify(params))
-    // const client = new AWS.DynamoDB.DocumentClient({convertEmptyValues: true})
-    // console.log("createEquipment(), client", JSON.stringify(client))
     const result = await getDocumentClient().put(params).promise()
     return result
 }
@@ -50,25 +47,6 @@ exports.getEquipmentByNumber = async (equipmentNumber) => {
         const result = await getDocumentClient().get(params).promise()
         console.log("getEquipmentByNumber(), result: %s", JSON.stringify(result))
         return result.Item
-    } catch (err) {
-        console.log(err)
-        throw err
-    }
-}
-
-exports.deleteEquipmentByNumber = async (equipmentNumber) => {
-    console.log("deleteEquipmentByNumber(), equipmentNumber: %s", equipmentNumber)
-    const params = {
-        TableName : utils.getDynamodbTableName(),
-        Key: {
-            'EquipmentNumber': equipmentNumber
-        },
-        ReturnValues: 'ALL_OLD'
-    }
-    try{
-        const result = await getDocumentClient().delete(params).promise()
-        console.log("deleteEquipmentByNumber(), result: %s", JSON.stringify(result))
-        return result.Attributes
     } catch (err) {
         console.log(err)
         throw err
@@ -111,4 +89,23 @@ exports.deleteTable = async () => {
     const result = await dynamoDB.deleteTable(params).promise()
     // console.log("deleteTable(), result: %s", JSON.stringify(result))
     return result
+}
+
+
+exports.purgeTable = async () => {
+    // console.log("purgeTable()")
+    const client = new AWS.DynamoDB.DocumentClient({region: process.env.AWS_REGION})
+    const rows = await client.scan({
+        TableName: utils.getDynamodbTableName(),
+        AttributesToGet: ['EquipmentNumber'],
+    }).promise()
+
+    // console.log(`Deleting ${rows.Items.length} records`)
+    await Promise.all(rows.Items.map(async (elem) => {
+        await client.delete({
+            TableName: utils.getDynamodbTableName(),
+            Key: elem,
+        }).promise();
+    }));
+    // console.log("purgeTable() done")
 }

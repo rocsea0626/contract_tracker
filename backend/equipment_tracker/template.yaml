@@ -5,7 +5,6 @@ Description: >
 
   Sample SAM Template for equipment_tracker
   
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Layers:
@@ -19,20 +18,89 @@ Globals:
       Variables:
         DB_NAME: !Ref EquipmentsTable
 
+Parameters:
+  StackName:
+    Type: String
+    Description: Stack name will be used in api.yaml
+  Stage:
+    Type: String
+    Description: Stage variable for ApiGateway
+
 Resources:
+  EquipmentTrackerApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub '${StackName}'
+      StageName: !Sub '${Stage}'
+      Auth:
+        ApiKeyRequired: true
+      Cors:
+        AllowMethods: "'GET,OPTIONS,POST'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+        AllowCredentials: true
+        MaxAge: "'1800'"
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: ./api.yaml
+
+  ApiKey:
+    Type: 'AWS::ApiGateway::ApiKey'
+#    DependsOn:
+#      - EquipmentTrackerApiUsagePlan
+    Properties:
+      Name: !Sub 'ApiKey-${StackName}'
+      Description: !Sub 'Developer ApiKey for ${StackName}'
+      Enabled: true
+      StageKeys:
+        - RestApiId: !Ref EquipmentTrackerApi
+          StageName: !Sub '${Stage}'
+
+  EquipmentTrackerApiUsagePlan:
+    Type: 'AWS::ApiGateway::UsagePlan'
+    DependsOn:
+      - EquipmentTrackerApiStage
+    Properties:
+      ApiStages:
+        - ApiId: !Ref EquipmentTrackerApi
+          Stage: !Sub '${Stage}'
+      Description: !Sub 'Developer usage plan for ${StackName}'
+      Quota:
+        Limit: 1000
+        Period: DAY
+      Throttle:
+        BurstLimit: 200
+        RateLimit: 100
+      UsagePlanName: !Sub 'UsagePlan-${StackName}'
+
+  EquipmentTrackerApiPlanKey:
+    Type: 'AWS::ApiGateway::UsagePlanKey'
+    Properties:
+      KeyId: !Ref ApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref EquipmentTrackerApiUsagePlan
+
+  EquipmentTrackerApiRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/AWSLambda_FullAccess
+
   EquipmentsSearch:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: handlers/equipments/
-      Events:
-        EquipmentsSearch:
-          Type: Api
-          Properties:
-            Path: /equipment/search
-            RequestParameters:
-              - method.request.querystring.limit:
-                  Required: true
-            Method: get
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref EquipmentsTable
@@ -41,40 +109,14 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: handlers/get-equipment/
-      Events:
-        GetEquipment:
-          Type: Api
-          Properties:
-            Path: /equipment/{equipmentNumber}
-            Method: get
       Policies:
         - DynamoDBReadPolicy:
-            TableName: !Ref EquipmentsTable
-
-  DeleteEquipment:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: handlers/get-equipment/
-      Events:
-        GetEquipment:
-          Type: Api
-          Properties:
-            Path: /equipment/{equipmentNumber}
-            Method: delete
-      Policies:
-        - DynamoDBCrudPolicy:
             TableName: !Ref EquipmentsTable
 
   CreateEquipment:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: handlers/create-equipment/
-      Events:
-        CreateEquipment:
-          Type: Api
-          Properties:
-            Path: /equipment
-            Method: post
       Policies:
         - DynamoDBWritePolicy:
             TableName: !Ref EquipmentsTable
@@ -82,31 +124,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: handlers/health/
-      Events:
-        CreateEquipment:
-          Type: Api
-          Properties:
-            Path: /health
-            Method: any
-      Policies:
-        - Statement:
-          - Effect: Allow
-            Action:
-              - dynamodb:PutItem
-            Resource: !GetAtt
-              - EquipmentsTable
-              - Arn
-
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: hello-world/
-      Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /hello
-            Method: get
 
   CommonLayer:
     Type: AWS::Serverless::LayerVersion
@@ -134,18 +151,15 @@ Resources:
         WriteCapacityUnits: 1
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   ApiEndpointUrl:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${EquipmentTrackerApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
+  ApiKeyID:
+    Description: "API key ID"
+    Value: !Ref ApiKey
+  ApiKey:
+    Description: "You can find your API Key in the AWS console: (Put in the request HEADER as 'x-api-key')"
+    Value: !Sub "https://console.aws.amazon.com/apigateway/home?region=${AWS::Region}#/api-keys/${ApiKey}"
   Health:
     Description: "Health check ARN"
     Value: !GetAtt Health.Arn
@@ -167,12 +181,6 @@ Outputs:
   EquipmentsSearchIamRole:
     Description: "Implicit IAM Role created for EquipmentsSearch function"
     Value: !GetAtt EquipmentsSearchRole.Arn
-  DeleteEquipment:
-    Description: "DeleteEquipment Function ARN"
-    Value: !GetAtt DeleteEquipment.Arn
-  DeleteEquipmentIamRole:
-    Description: "Implicit IAM Role created for DeleteEquipment function"
-    Value: !GetAtt DeleteEquipmentRole.Arn
   CreateEquipment:
     Description: "CreateEquipment Function ARN"
     Value: !GetAtt CreateEquipment.Arn
