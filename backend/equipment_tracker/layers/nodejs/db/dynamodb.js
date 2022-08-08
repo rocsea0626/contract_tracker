@@ -77,6 +77,7 @@ exports.createTable = async () => {
             WriteCapacityUnits: 1
         }
     }
+    // console.log("createTable(), params: %s", JSON.stringify(params))
     const result = await dynamoDB.createTable(params).promise()
     // console.log("createTable(), result: %s", JSON.stringify(result))
     return result
