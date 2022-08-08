@@ -13,7 +13,7 @@ Resources to be deployed:
 - AWS ApiGateway with request validation
   - AWS Restful API is created. Per client throttling, authentication, etc can be enabled later 
 - Lambda + Roles
-  - Using `PROXY` option for lambda integration, so that payload of requests will forwarded to lambda directly
+  - Using `LAMBDA_PROXY` option for lambda integration, so that payload of requests will forwarded to lambda directly
 - Dynamodb 
 ?Cognito, Pipeline
 
@@ -27,6 +27,7 @@ Resources to be deployed:
 - Database logics are implemented in a seperate file so that they can be unit tested independently. 
 - When unit testing lambda handlers, dependent database operations can be mocked
 ### Testing
+Dynamodb operation functions are tested against real Dynamodb instance locally (reason ???) 
 unit testing should not require internet connection
 integratino test, yes
 ### Development process

@@ -4,14 +4,15 @@ const db = require("./dynamodb")
 
 describe('Tests db functions', function () {
 
-    describe('Test createEquipment()', ()=>{
-        beforeEach(async ()=>{
-            await db.createTable()
-        })
+    beforeEach(async ()=>{
+        await db.createTable()
+    })
 
-        afterEach(async ()=>{
-            await db.deleteTable()
-        })
+    afterEach(async ()=>{
+        await db.deleteTable()
+    })
+
+    describe('Test createEquipment()', ()=>{
 
         it('Successful', async () => {
             const equipment = {
@@ -60,13 +61,6 @@ describe('Tests db functions', function () {
     })
 
     describe('Test getEquipmentByNumber()', ()=>{
-        beforeEach(async ()=>{
-            await db.createTable()
-        })
-
-        afterEach(async ()=>{
-            await db.deleteTable()
-        })
 
         it('Successful', async () => {
             const equipment = {
@@ -101,13 +95,6 @@ describe('Tests db functions', function () {
     })
 
     describe('Test getEquipments()', ()=>{
-        beforeEach(async ()=>{
-            await db.createTable()
-        })
-
-        afterEach(async ()=>{
-            await db.deleteTable()
-        })
 
         it('Successful', async () => {
 
@@ -177,38 +164,5 @@ describe('Tests db functions', function () {
         })
     })
 
-    describe('Test deleteEquipmentByNumber()', ()=>{
-        beforeEach(async ()=>{
-            await db.createTable()
-        })
-
-        afterEach(async ()=>{
-            await db.deleteTable()
-        })
-
-        it('Successful', async () => {
-
-            const equipment = {
-                EquipmentNumber: "en_12345",
-                Address: "mock_address",
-                StartDate: "mock_start_date",
-                EndDate: "mock_end_date",
-                Status: "Running",
-            }
-
-            const resp = await db.createEquipment(equipment)
-            expect(resp).to.be.empty
-
-            const result = await db.deleteEquipmentByNumber("en_12345")
-            expect(result).to.be.not.empty
-            expect(result.EquipmentNumber).to.equal("en_12345")
-        })
-
-        it('Failed, item not found', async () => {
-            const result = await db.deleteEquipmentByNumber("en_12345")
-            expect(result).to.be.undefined
-        })
-
-    })
 });
 
