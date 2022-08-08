@@ -34,9 +34,15 @@ sam deploy \
   StackName="$STACK_NAME" \
   Stage="$BUILD_SUFFIX"
 
+echo "Fetching API_KEY..."
+export API_KEY_ID=$(aws cloudformation --region $AWS_REGION describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='ApiKeyID'].OutputValue" --output text)
+echo "API_KEY_ID: ${API_KEY_ID}"
+export API_KEY=$(aws apigateway get-api-key --include-value --api-key "${API_KEY_ID}" --output json | jq -r '. | {value} | join(" ")')
+echo "API_KEY: ${API_KEY}"
+
 echo "Run integration test"
 #AWS_SAM_STACK_NAME=equipment-tracker-dev AWS_REGION=eu-central-1 npm run integ-test
-AWS_SAM_STACK_NAME="$STACK_NAME" AWS_REGION="$AWS_REGION" npm run integ-test
+API_KEY="$API_KEY" AWS_SAM_STACK_NAME="$STACK_NAME" AWS_REGION="$AWS_REGION" npm run integ-test
 
 
 

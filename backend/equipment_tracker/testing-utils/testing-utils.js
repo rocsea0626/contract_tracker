@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 const chai = require("chai");
 const expect = chai.expect;
+const axios = require("axios");
 
 getStackName = () => {
     const stackName = process.env["AWS_SAM_STACK_NAME"]
@@ -46,8 +47,23 @@ getApiEndpoint = async () => {
     return apiOutput.OutputValue;
 }
 
+getHeaders = (apiKey) => {
+    return {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey
+    }
+}
+
+getAxiosClient = (baseUrl, apiKey) =>{
+    return axios.create({
+        baseURL: baseUrl,
+        headers: getHeaders(apiKey)
+    })
+}
+
 module.exports = {
     getStackName: getStackName,
     getRegion: getRegion,
     getApiEndpoint: getApiEndpoint,
+    getAxiosClient: getAxiosClient,
 }

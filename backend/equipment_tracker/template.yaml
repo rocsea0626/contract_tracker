@@ -43,6 +43,18 @@ Resources:
           Parameters:
             Location: ./api.yaml
 
+  ApiKey:
+    Type: 'AWS::ApiGateway::ApiKey'
+    DependsOn:
+      - EquipmentTrackerApi
+    Properties:
+      Name: TestApiKey
+      Description: CloudFormation API Key V1
+      Enabled: true
+      StageKeys:
+        - RestApiId: !Ref EquipmentTrackerApi
+          StageName: !Sub '${Stage}'
+
   EquipmentTrackerApiRole:
     Type: AWS::IAM::Role
     Properties:
@@ -123,6 +135,12 @@ Outputs:
   ApiEndpointUrl:
     Description: "API Gateway endpoint URL for Prod stage"
     Value: !Sub "https://${EquipmentTrackerApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
+  ApiKeyID:
+    Description: "API key ID"
+    Value: !Ref ApiKey
+  ApiKey:
+    Description: "You can find your API Key in the AWS console: (Put in the request HEADER as 'x-api-key')"
+    Value: !Sub "https://console.aws.amazon.com/apigateway/home?region=${AWS::Region}#/api-keys/${ApiKey}"
   Health:
     Description: "Health check ARN"
     Value: !GetAtt Health.Arn
