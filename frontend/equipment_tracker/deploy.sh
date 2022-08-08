@@ -15,11 +15,13 @@ echo ""
 echo "Build project"
 npm run build
 
-echo "List buckets in S3"
-aws s3 ls
-
-echo "Uploading stack $STACK_NAME into S3 ..."
-aws s3 mb s3://"$PROJECT_NAME" --region "$AWS_REGION" 2>/dev/null
-aws s3 sync ./build s3://equipemnt-tracker-frontend/
+#echo "List buckets in S3"
+#aws s3 ls
+#
+#echo "Uploading stack $STACK_NAME into S3 ..."
+#aws s3 mb s3://"$PROJECT_NAME" --region "$AWS_REGION" 2>/dev/null
+#jq -r --arg variable "arn:aws:s3:::${PROJECT_NAME}/*" '.Statement[0].Resource = $variable' bucket_policy_template.json > bucket_policy.json
+#aws s3api put-bucket-policy --bucket $PROJECT_NAME --policy file://bucket_policy.json
+#aws s3 sync ./build s3://$PROJECT_NAME/
 
 
