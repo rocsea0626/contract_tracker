@@ -5,7 +5,7 @@ let client = undefined
 const getHeaders = () => {
     return {
         'Content-Type': 'application/json',
-        // 'x-api-key': process.env.REACT_APP_API_KEY
+        'X-Api-Key': process.env.REACT_APP_API_KEY
     }
 }
 
@@ -37,8 +37,5 @@ export function fetchEquipmentByNumber(equipmentNumber) {
 
     return getClient().get(
         relativePath,
-        {
-            headers: getHeaders()
-        }
     )
 }

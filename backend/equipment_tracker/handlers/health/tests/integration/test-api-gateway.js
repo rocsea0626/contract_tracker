@@ -15,19 +15,17 @@ describe("Test /health", function () {
     client = testingUtils.getAxiosClient(apiEndpoint, process.env["API_KEY"])
   });
 
-  it("returns 200, ", (done) => {
+  it("returns 200, ", async () => {
       const path = apiEndpoint + 'health'
-      client.get(path)
-          .then(res => {
-              expect(res.status).to.be.equal(200);
-              expect(res.data).to.be.an("object");
-              expect(res.data['context.httpMethod']).to.be.equal("GET");
-              done();
-          })
-          .catch(error => {
-              console.error(error);
-              throw error
-          })
+      try{
+        const res = await client.get(path)
+          expect(res.status).to.be.equal(200);
+          expect(res.data).to.be.an("object");
+          expect(res.data['context.httpMethod']).to.be.equal("GET");
+      }catch(err) {
+          console.error(err)
+          throw err
+      }
   })
 
 })
