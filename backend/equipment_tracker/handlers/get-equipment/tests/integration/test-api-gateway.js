@@ -3,14 +3,23 @@
 const chai = require("chai");
 const testingUtils = require("../../../../testing-utils/testing-utils")
 const expect = chai.expect;
+const dynamodbUtils = require("../../../../layers/nodejs/db/dynamodb")
 
 describe("Test (GET) /equipment/{equipmentNumber}", function () {
-  let apiEndpoint, client;
+  let apiEndpoint, client
 
   before(async () => {
     apiEndpoint = await testingUtils.getApiEndpoint()
     console.log("apiEndpoint: %s", apiEndpoint)
     client = testingUtils.getAxiosClient(apiEndpoint, process.env["API_KEY"])
+  })
+
+  beforeEach( async ()=>{
+    await dynamodbUtils.purgeTable()
+  })
+
+  afterEach( async ()=>{
+    await dynamodbUtils.purgeTable()
   })
 
   it("Successful, returns 200, OK", async () => {
@@ -32,10 +41,6 @@ describe("Test (GET) /equipment/{equipmentNumber}", function () {
       expect(res.data.EquipmentNumber).to.equal("en_12345")
     }catch (err){
       throw err
-    } finally {
-      const pathDelete = apiEndpoint + 'equipment/en_12345'
-      const resDelete = await client.delete(pathDelete)
-      expect(resDelete.status).to.equal(200)
     }
   })
 

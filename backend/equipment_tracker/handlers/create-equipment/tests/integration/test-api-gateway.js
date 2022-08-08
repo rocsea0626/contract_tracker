@@ -3,6 +3,7 @@
 const chai = require("chai");
 const testingUtils = require("../../../../testing-utils/testing-utils")
 const expect = chai.expect;
+const dynamodbUtils = require("../../../../layers/nodejs/db/dynamodb")
 
 
 describe("Test (POST) /equipment", function () {
@@ -13,6 +14,14 @@ describe("Test (POST) /equipment", function () {
     console.log("apiEndpoint: %s", apiEndpoint)
     client = testingUtils.getAxiosClient(apiEndpoint, process.env["API_KEY"])
   });
+
+  beforeEach(async ()=>{
+    await dynamodbUtils.purgeTable()
+  })
+
+  afterEach(async ()=>{
+    await dynamodbUtils.purgeTable()
+  })
 
   it("Successful, returns 201, created", async () => {
     try{
@@ -30,10 +39,6 @@ describe("Test (POST) /equipment", function () {
       expect(res.data.EquipmentNumber).to.equal("en_12345");
     } catch (err){
       throw err
-    } finally {
-      const path = apiEndpoint + 'equipment/en_12345'
-      const res = await client.delete(path)
-      expect(res.status).to.equal(200)
     }
   });
 
@@ -56,10 +61,6 @@ describe("Test (POST) /equipment", function () {
       expect(resFailed).to.be.null
     } catch (err){
       expect(err.response.status).to.equal(409);
-    } finally {
-      const path = apiEndpoint + 'equipment/en_12345'
-      const res = await client.delete(path)
-      expect(res.status).to.equal(200)
     }
   });
 

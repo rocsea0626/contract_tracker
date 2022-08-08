@@ -59,6 +59,8 @@ Resources:
 
   EquipmentTrackerApiUsagePlan:
     Type: 'AWS::ApiGateway::UsagePlan'
+    DependsOn:
+      - EquipmentTrackerApiStage
     Properties:
       ApiStages:
         - ApiId: !Ref EquipmentTrackerApi

@@ -10,8 +10,8 @@
     "axios": "^0.21.1"
   },
   "scripts": {
-    "test": "env DB_NAME=EquipmentsTable mocha --timeout 10000 'handlers/*/tests/unit/*' 'layers/nodejs/*/*'",
-    "integ-test": "mocha 'handlers/*/tests/integration/*'",
+    "test": "env DB_NAME=EquipmentsTable mocha 'handlers/*/tests/unit/*' 'layers/nodejs/*/*'",
+    "integ-test": "mocha --timeout 10000 'handlers/*/tests/integration/*'",
     "put-items-dynamodb": "env AMOUNT=100 node tools/gen-fake-data.js"
   },
   "devDependencies": {
