@@ -1,5 +1,9 @@
 # Kone Assignment design considerations
 
+
+## Folder structure
+Both backend and frontend source codes are included in this project (Purpose ????)
+
 ##Tech stacks
 ### Frontend
 A ReactJs App
@@ -33,8 +37,11 @@ integratino test, yes
     - Using a `deploy.sh` script to deploy entire backend stack. 
     - Once the stack has been deployed, integration test will be executed against newly deployed stack to make sure existing features still work. 
 
-### Todo
-cognito user authentication
-- E2E test
-  - simulate user behaviour on browser
+### Nice to have features
+- Backend
+  - cognito user authentication
+  - support pagination of items in API & Lambda
+- Frontend
+  - pagination of items returned by API
+  - E2E test, by simulating user behaviour on browser
 
