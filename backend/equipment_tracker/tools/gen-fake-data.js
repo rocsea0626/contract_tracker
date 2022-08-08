@@ -55,11 +55,10 @@ const writeToFile = (filename, data) => {
 
 const batchWriteToDynamodb = async (dataSet) => {
 
-    const client = new AWS.DynamoDB.DocumentClient({region: "eu-central-1"})
+    const client = new AWS.DynamoDB.DocumentClient({region: process.env.AWS_REGION})
     return dataSet.forEach(async (data)=>{
         await client.batchWrite(data).promise()
     })
-
 }
 
 (async () => {

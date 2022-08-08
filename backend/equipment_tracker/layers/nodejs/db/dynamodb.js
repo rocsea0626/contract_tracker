@@ -109,3 +109,22 @@ exports.deleteTable = async () => {
     // console.log("deleteTable(), result: %s", JSON.stringify(result))
     return result
 }
+
+
+exports.purgeTable = async () => {
+    console.log("purgeTable()")
+    const client = new AWS.DynamoDB.DocumentClient({region: process.env.AWS_REGION})
+    const rows = await client.scan({
+        TableName: utils.getDynamodbTableName(),
+        AttributesToGet: ['EquipmentNumber'],
+    }).promise()
+
+    console.log(`Deleting ${rows.Items.length} records`)
+    await Promise.all(rows.Items.map(async (elem) => {
+        await client.delete({
+            TableName: utils.getDynamodbTableName(),
+            Key: elem,
+        }).promise();
+    }));
+    console.log("purgeTable() done")
+}

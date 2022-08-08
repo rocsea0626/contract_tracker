@@ -1,5 +1,4 @@
-const AWS = require('aws-sdk')
-let response;
+let response
 
 exports.lambdaHandler = async (event, context) => {
     try {

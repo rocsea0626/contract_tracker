@@ -43,6 +43,10 @@ Using the `deploy.sh` script to build & deploy frontend Reactjs app into AWS S3 
 
 ```sh
 cd frontend
+# Create a .env file with content below:
+touch .env
+#REACT_APP_API_GATEWAY_URL=<output from backend deployment>
+#REACT_APP_API_KEY=<output from backend deployment>
 # Deploy frontend
 ./deploy.sh
 ```
@@ -86,7 +90,7 @@ AWS_SAM_STACK_NAME=<stack_name> AWS_REGION=<region> npm run integ-test
 
 ```shell
 cd frontend
-npm test 
+npm test
 ```
 
 ## Folder structure

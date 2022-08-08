@@ -1,18 +1,27 @@
 "use strict"
 
 const chai = require("chai");
-const axios = require("axios");
 const testingUtils = require("../../../../testing-utils/testing-utils")
 const expect = chai.expect;
+const dynamodbUtils = require("../../../../layers/nodejs/db/dynamodb")
 
 
 describe("Test (POST) /equipment", function () {
-  let apiEndpoint;
+  let apiEndpoint, client;
 
   before(async () => {
     apiEndpoint = await testingUtils.getApiEndpoint()
     console.log("apiEndpoint: %s", apiEndpoint)
+    client = testingUtils.getAxiosClient(apiEndpoint, process.env["API_KEY"])
   });
+
+  beforeEach(async ()=>{
+    await dynamodbUtils.purgeTable()
+  })
+
+  afterEach(async ()=>{
+    await dynamodbUtils.purgeTable()
+  })
 
   it("Successful, returns 201, created", async () => {
     try{
@@ -25,15 +34,11 @@ describe("Test (POST) /equipment", function () {
         Status: "Running",
       }
 
-      const res = await axios.post(path, payload)
+      const res = await client.post(path, payload)
       expect(res.status).to.equal(201);
       expect(res.data.EquipmentNumber).to.equal("en_12345");
     } catch (err){
       throw err
-    } finally {
-      const path = apiEndpoint + 'equipment/en_12345'
-      const res = await axios.delete(path)
-      expect(res.status).to.equal(200)
     }
   });
 
@@ -48,18 +53,14 @@ describe("Test (POST) /equipment", function () {
         Status: "Running",
       }
 
-      const res = await axios.post(path, payload)
+      const res = await client.post(path, payload)
       expect(res.status).to.equal(201);
       expect(res.data.EquipmentNumber).to.equal("en_12345");
 
-      const resFailed = await axios.post(path, payload)
+      const resFailed = await client.post(path, payload)
       expect(resFailed).to.be.null
     } catch (err){
       expect(err.response.status).to.equal(409);
-    } finally {
-      const path = apiEndpoint + 'equipment/en_12345'
-      const res = await axios.delete(path)
-      expect(res.status).to.equal(200)
     }
   });
 
@@ -72,7 +73,7 @@ describe("Test (POST) /equipment", function () {
         EndDate: "end_date_1",
         Status: "Running",
       }
-      const res = await axios.post(path, payload)
+      const res = await client.post(path, payload)
       expect(res).to.be.null
     } catch (err){
       expect(err.response.status).to.equal(400)
@@ -89,7 +90,7 @@ describe("Test (POST) /equipment", function () {
         EndDate: "end_date_1",
         Status: "Running",
       }
-      const res = await axios.post(path, payload)
+      const res = await client.post(path, payload)
       expect(res).to.be.null
     } catch (err){
       expect(err.response.status).to.equal(400)

@@ -1,28 +1,39 @@
 "use strict"
 
 const chai = require("chai");
-const axios = require("axios");
 const testingUtils = require("../../../../testing-utils/testing-utils")
+const dynamodbUtils = require("../../../../layers/nodejs/db/dynamodb");
 const expect = chai.expect;
 
-
 describe("Test (GET) /equipment/search?limit={limit}", ()=>{
-  let apiEndpoint;
+  let apiEndpoint, client;
 
   before(async () => {
     apiEndpoint = await testingUtils.getApiEndpoint()
     console.log("apiEndpoint: %s", apiEndpoint)
+    client = testingUtils.getAxiosClient(apiEndpoint, process.env["API_KEY"])
+  })
+
+  beforeEach( async ()=>{
+    await dynamodbUtils.purgeTable()
+  })
+
+  afterEach( async ()=>{
+    await dynamodbUtils.purgeTable()
   })
 
   describe("No initial data", function () {
     it("Successful, returns 200, OK, empty response", async () => {
       try{
         const getPath = apiEndpoint + 'equipment/search'
-        const res = await axios.get(getPath, {
-          params: {
-            limit: 3
-          }
-        })
+        const res = await client.get(
+            getPath,
+            {
+              params: {
+                limit: 3,
+              },
+            }
+        )
         expect(res.status).to.equal(200)
         expect(res.data.length).to.equal(0)
 
@@ -33,8 +44,8 @@ describe("Test (GET) /equipment/search?limit={limit}", ()=>{
     })
   })
 
-  describe("With initial data", function () {
-    before(async () => {
+  describe("Successful, returns 200, OK", function () {
+    beforeEach(async () => {
       const path = apiEndpoint + "equipment"
       const e1 = {
         EquipmentNumber: "it_get_eq_1",
@@ -64,9 +75,9 @@ describe("Test (GET) /equipment/search?limit={limit}", ()=>{
         }
       }
       const res = await Promise.all([
-        axios.post(path, e1, config),
-        axios.post(path, e2, config),
-        axios.post(path, e3, config)
+        client.post(path, e1),
+        client.post(path, e2, config),
+        client.post(path, e3, config)
       ])
       // console.log(res)
       expect(res[0].status).to.equal(201)
@@ -75,32 +86,10 @@ describe("Test (GET) /equipment/search?limit={limit}", ()=>{
 
     })
 
-    after(async () => {
-      const path1 = apiEndpoint + "equipment/it_get_eq_1"
-      const path2 = apiEndpoint + "equipment/it_get_eq_2"
-      const path3 = apiEndpoint + "equipment/it_get_eq_3"
-      const config = {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-
-
-      const res = await Promise.all([
-        axios.delete(path1, config),
-        axios.delete(path2, config),
-        axios.delete(path3, config)
-      ])
-      // console.log(res)
-      expect(res[0].status).to.equal(200)
-      expect(res[1].status).to.equal(200)
-      expect(res[2].status).to.equal(200)
-    })
-
     it("Successful, returns 200, OK", async () => {
       try{
         const getPath = apiEndpoint + 'equipment/search'
-        const res = await axios.get(getPath, {
+        const res = await client.get(getPath, {
           params: {
             limit: 3
           }
@@ -117,7 +106,7 @@ describe("Test (GET) /equipment/search?limit={limit}", ()=>{
     it("Successful, returns 200, OK, limit > 3", async () => {
       try{
         const getPath = apiEndpoint + 'equipment/search'
-        const res = await axios.get(getPath, {
+        const res = await client.get(getPath, {
           params: {
             limit: 10
           }
@@ -134,7 +123,7 @@ describe("Test (GET) /equipment/search?limit={limit}", ()=>{
     it("Successful, returns 200, OK, limit < 3", async () => {
       try{
         const getPath = apiEndpoint + 'equipment/search'
-        const res = await axios.get(getPath, {
+        const res = await client.get(getPath, {
           params: {
             limit: 1
           }
@@ -151,7 +140,7 @@ describe("Test (GET) /equipment/search?limit={limit}", ()=>{
     it("Failed, returns 400, bad request limit=0", async () => {
       try{
         const getPath = apiEndpoint + 'equipment/search'
-        const res = await axios.get(getPath, {
+        const res = await client.get(getPath, {
           params: {
             limit: -1
           }

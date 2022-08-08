@@ -10,13 +10,12 @@ import reducer, {
     getEquipments,
     getEquipmentByNumber
 } from "./equipments"
-const MockAdapter = require("axios-mock-adapter");
-import {getClient} from '../api/aws'
+const sinon = require('sinon')
+const api = require('../api/aws')
 import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 const middlewares = [ thunk ]
 const mockStore = configureMockStore(middlewares)
-
 
 const equipmentsList = [
     {
@@ -41,12 +40,7 @@ const equipmentsList = [
         Status: "Stopped",
     },
 ]
-
-const mockNetworkResponse = () => {
-    const mock = new MockAdapter(getClient(), { onNoMatch: "passthrough" })
-    mock.onGet(`/equipment/search/?limit=3`).reply(200, equipmentsList)
-    mock.onGet(`/equipment/en_3`).reply(200, equipmentsList[2])
-}
+const sandbox = sinon.createSandbox()
 
 const initialState = {
     loading: false,
@@ -56,11 +50,10 @@ const initialState = {
     searchBy: LIMIT
 }
 
-describe("Test equipments reducer", () => {
-    beforeAll(() => {
-        mockNetworkResponse()
-    })
 
+
+
+describe("Test equipments reducer", () => {
     it('Test initial state', () => {
         expect(reducer(undefined, { type: undefined })).toEqual({
             loading: false,
@@ -115,12 +108,12 @@ describe("Test equipments reducer", () => {
     })
 
     it("Test getEquipments()", async () => {
+        sandbox.stub(api, 'fetchEquipments').returns(equipmentsList)
         const store = mockStore(initialState)
         const expectedActions = [
             'equipments/equipmentsFetchStarts',
             'equipments/equipmentsFetched'
         ]
-
         return store.dispatch(getEquipments(3))
             .then(() => {
                 const actualActions = store.getActions().map(action => action.type)
@@ -129,6 +122,8 @@ describe("Test equipments reducer", () => {
     })
 
     it("Test getEquipmentByNumber()", async () => {
+        sandbox.stub(api, 'fetchEquipmentByNumber').returns(equipmentsList[2])
+
         const store = mockStore(initialState)
         const expectedActions = [
             'equipments/equipmentsFetchStarts',
