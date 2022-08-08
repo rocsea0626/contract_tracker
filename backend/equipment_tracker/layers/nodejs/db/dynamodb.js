@@ -30,9 +30,6 @@ exports.createEquipment = async (equipment) => {
         TableName: utils.getDynamodbTableName(),
         ConditionExpression: 'attribute_not_exists(EquipmentNumber)'
     }
-    // console.log("createEquipment(), params: %s", JSON.stringify(params))
-    // const client = new AWS.DynamoDB.DocumentClient({convertEmptyValues: true})
-    // console.log("createEquipment(), client", JSON.stringify(client))
     const result = await getDocumentClient().put(params).promise()
     return result
 }
