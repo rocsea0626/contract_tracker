@@ -35,9 +35,10 @@ Resources:
       Auth:
         ApiKeyRequired: true
       Cors:
-        AllowMethods: "'GET,OPTIONS,DELETE,POST'"
-        AllowHeaders: "'Origin,X-Requested-With,Content-Type,Accept,X-Access-Token,Authorization,X-Api-Key'"
+        AllowMethods: "'GET,OPTIONS,POST'"
+        AllowHeaders: "'*'"
         AllowOrigin: "'*'"
+        AllowCredentials: true
         MaxAge: "'1800'"
       DefinitionBody:
         Fn::Transform:
@@ -47,8 +48,8 @@ Resources:
 
   ApiKey:
     Type: 'AWS::ApiGateway::ApiKey'
-    DependsOn:
-      - EquipmentTrackerApiUsagePlan
+#    DependsOn:
+#      - EquipmentTrackerApiUsagePlan
     Properties:
       Name: !Sub 'ApiKey-${StackName}'
       Description: !Sub 'Developer ApiKey for ${StackName}'
@@ -110,14 +111,6 @@ Resources:
       CodeUri: handlers/get-equipment/
       Policies:
         - DynamoDBReadPolicy:
-            TableName: !Ref EquipmentsTable
-
-  DeleteEquipment:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: handlers/get-equipment/
-      Policies:
-        - DynamoDBCrudPolicy:
             TableName: !Ref EquipmentsTable
 
   CreateEquipment:
@@ -188,12 +181,6 @@ Outputs:
   EquipmentsSearchIamRole:
     Description: "Implicit IAM Role created for EquipmentsSearch function"
     Value: !GetAtt EquipmentsSearchRole.Arn
-  DeleteEquipment:
-    Description: "DeleteEquipment Function ARN"
-    Value: !GetAtt DeleteEquipment.Arn
-  DeleteEquipmentIamRole:
-    Description: "Implicit IAM Role created for DeleteEquipment function"
-    Value: !GetAtt DeleteEquipmentRole.Arn
   CreateEquipment:
     Description: "CreateEquipment Function ARN"
     Value: !GetAtt CreateEquipment.Arn

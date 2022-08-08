@@ -53,25 +53,6 @@ exports.getEquipmentByNumber = async (equipmentNumber) => {
     }
 }
 
-exports.deleteEquipmentByNumber = async (equipmentNumber) => {
-    console.log("deleteEquipmentByNumber(), equipmentNumber: %s", equipmentNumber)
-    const params = {
-        TableName : utils.getDynamodbTableName(),
-        Key: {
-            'EquipmentNumber': equipmentNumber
-        },
-        ReturnValues: 'ALL_OLD'
-    }
-    try{
-        const result = await getDocumentClient().delete(params).promise()
-        console.log("deleteEquipmentByNumber(), result: %s", JSON.stringify(result))
-        return result.Attributes
-    } catch (err) {
-        console.log(err)
-        throw err
-    }
-}
-
 exports.getEquipments = async (limit) => {
     const params = {
         TableName : utils.getDynamodbTableName(),
@@ -112,19 +93,19 @@ exports.deleteTable = async () => {
 
 
 exports.purgeTable = async () => {
-    console.log("purgeTable()")
+    // console.log("purgeTable()")
     const client = new AWS.DynamoDB.DocumentClient({region: process.env.AWS_REGION})
     const rows = await client.scan({
         TableName: utils.getDynamodbTableName(),
         AttributesToGet: ['EquipmentNumber'],
     }).promise()
 
-    console.log(`Deleting ${rows.Items.length} records`)
+    // console.log(`Deleting ${rows.Items.length} records`)
     await Promise.all(rows.Items.map(async (elem) => {
         await client.delete({
             TableName: utils.getDynamodbTableName(),
             Key: elem,
         }).promise();
     }));
-    console.log("purgeTable() done")
+    // console.log("purgeTable() done")
 }
