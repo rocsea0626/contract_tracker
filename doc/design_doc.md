@@ -1,5 +1,9 @@
 # Kone Assignment design considerations
 
+
+## Folder structure
+Both backend and frontend source codes are included in this project (Purpose ????)
+
 ##Tech stacks
 ### Frontend
 A ReactJs App
@@ -9,7 +13,7 @@ Resources to be deployed:
 - AWS ApiGateway with request validation
   - AWS Restful API is created. Per client throttling, authentication, etc can be enabled later 
 - Lambda + Roles
-  - Using `PROXY` option for lambda integration, so that payload of requests will forwarded to lambda directly
+  - Using `LAMBDA_PROXY` option for lambda integration, so that payload of requests will forwarded to lambda directly
 - Dynamodb 
 ?Cognito, Pipeline
 
@@ -23,6 +27,7 @@ Resources to be deployed:
 - Database logics are implemented in a seperate file so that they can be unit tested independently. 
 - When unit testing lambda handlers, dependent database operations can be mocked
 ### Testing
+Dynamodb operation functions are tested against real Dynamodb instance locally (reason ???) 
 unit testing should not require internet connection
 integratino test, yes
 ### Development process
@@ -33,8 +38,11 @@ integratino test, yes
     - Using a `deploy.sh` script to deploy entire backend stack. 
     - Once the stack has been deployed, integration test will be executed against newly deployed stack to make sure existing features still work. 
 
-### Todo
-cognito user authentication
-- E2E test
-  - simulate user behaviour on browser
+### Nice to have features
+- Backend
+  - cognito user authentication
+  - support pagination of items in API & Lambda
+- Frontend
+  - pagination of items returned by API
+  - E2E test, by simulating user behaviour on browser
 
