@@ -22,6 +22,9 @@ Resources to be deployed:
 ### Modular codes
 - Database logics are implemented in a seperate file so that they can be unit tested independently. 
 - When unit testing lambda handlers, dependent database operations can be mocked
+### Testing
+unit testing should not require internet connection
+integratino test, yes
 ### Development process
   - Developers should be able to locally test new features/lambdas locally first
   - local dev + unit test + mock dependencies (AWS services)
@@ -29,5 +32,9 @@ Resources to be deployed:
   - integration test
     - Using a `deploy.sh` script to deploy entire backend stack. 
     - Once the stack has been deployed, integration test will be executed against newly deployed stack to make sure existing features still work. 
-  
+
+### Todo
+cognito user authentication
+- E2E test
+  - simulate user behaviour on browser
 

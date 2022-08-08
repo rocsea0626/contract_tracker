@@ -9,6 +9,11 @@ const getHeaders = () => {
     }
 }
 
+const api = axios.create({
+    baseURL: process.env.REACT_APP_API_GATEWAY_URL,
+    headers: getHeaders()
+})
+
 export const getClient = () =>{
     if(!client){
         client = axios.create({
@@ -16,13 +21,12 @@ export const getClient = () =>{
             headers: getHeaders()
         })
     }
-    return client
 }
 
 export function fetchEquipments(limit) {
     const relativePath = 'equipment/search'
 
-    return getClient().get(
+    return api.get(
         relativePath,
         {
             params: {
@@ -35,7 +39,7 @@ export function fetchEquipments(limit) {
 export function fetchEquipmentByNumber(equipmentNumber) {
     const relativePath = 'equipment/'+equipmentNumber
 
-    return getClient().get(
+    return api.get(
         relativePath,
     )
 }

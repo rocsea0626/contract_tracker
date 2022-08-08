@@ -42,14 +42,14 @@ describe('EquipmentsList component', () => {
 
 
   test('Renders with data', async () => {
-    render(
+    store.dispatch(equipmentsFetched(equipmentsList))
+    const { queryAllByTestId } = render(
         <Provider store={store}>
           <EquipmentsList />
         </Provider>
     )
-    store.dispatch(equipmentsFetched(equipmentsList))
-    await waitFor(() => screen.queryAllByTestId('equipment_row'))
-    expect(screen.queryAllByTestId('equipment_row').length).toEqual(3)
+    const rows = await waitFor(() => queryAllByTestId('equipment_row'));
+    expect(rows.length).toEqual(3)
   })
 
 })
