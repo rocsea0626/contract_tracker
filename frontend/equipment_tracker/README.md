@@ -38,3 +38,6 @@ Your app is ready to be deployed!
 ```sh
 npm run build
 ```
+
+## Clean up
+aws cloudformation delete-stack --stack-name equipment-tracker-dev
