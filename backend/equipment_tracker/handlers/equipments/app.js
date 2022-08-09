@@ -1,8 +1,20 @@
 const db  = require(process.env.AWS_EXECUTION_ENV ? '/opt/db/dynamodb' : '../../layers/nodejs/db/dynamodb')
 const utils  = require(process.env.AWS_EXECUTION_ENV ? '/opt/utils/utils' : '../../layers/nodejs/utils/utils')
 
+
+/**
+ * @typedef Equipment
+ * @type {object}
+ * @property {string} EquipmentNumber
+ * @property {string} Address
+ * @property {string} StartDate
+ * @property {string} EndDate
+ * @property {string} Status
+ */
+
 /**
  * (GET) ~/equipment/search?limit={limit}
+ * @return {Equipment[]}
  */
 exports.lambdaHandler = async (event, context) => {
     try {

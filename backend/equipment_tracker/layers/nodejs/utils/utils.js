@@ -1,7 +1,16 @@
+/**
+ * Returns a boolean to indicate if an object has no property
+ * @param {object} object
+ * @return {boolean}
+ */
 exports.isEmpty = (object) => {
     return Object.keys(object).length === 0
 }
 
+/**
+ * Returns Dynamodb tableName, which is provided as env variable
+ * @return {string}
+ */
 exports.getDynamodbTableName = () => {
     const tableName = process.env["DB_NAME"];
     if (!tableName) {
@@ -11,10 +20,31 @@ exports.getDynamodbTableName = () => {
     return tableName;
 }
 
+/**
+ * Parse limit into int, otherwise return undefined
+ * @param {string|number} limit
+ * @return {number}
+ */
 exports.parseQueryStringLimit = (limit) => {
     return isNaN(parseInt(limit)) ? undefined : parseInt(limit)
 }
 
+
+/**
+ * @typedef Equipment
+ * @type {object}
+ * @property {string} EquipmentNumber
+ * @property {string} Address
+ * @property {string} StartDate
+ * @property {string} EndDate
+ * @property {string} EndDate
+ */
+
+/**
+ * Parse event into Equipment
+ * @param {object} event
+ * @return {Equipment}
+ */
 exports.parseRequest = (event) => {
     console.log("parseRequest(event.body: %s)", event.body)
     const equipment = JSON.parse(event.body)
