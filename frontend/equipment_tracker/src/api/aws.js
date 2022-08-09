@@ -5,7 +5,7 @@ let client = undefined
 const getHeaders = () => {
     return {
         'Content-Type': 'application/json',
-        'X-Api-Key': process.env.REACT_APP_API_KEY
+        // 'X-Api-Key': process.env.REACT_APP_API_KEY
     }
 }
 

@@ -50,14 +50,14 @@ getApiEndpoint = async () => {
 getHeaders = (apiKey) => {
     return {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey
+        // 'x-api-key': apiKey
     }
 }
 
-getAxiosClient = (baseUrl, apiKey) =>{
+getAxiosClient = (baseUrl) =>{
     return axios.create({
         baseURL: baseUrl,
-        headers: getHeaders(apiKey)
+        headers: getHeaders()
     })
 }
 

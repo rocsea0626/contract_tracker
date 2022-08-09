@@ -11,7 +11,7 @@ describe("Test (GET) /equipment/search?limit={limit}", ()=>{
   before(async () => {
     apiEndpoint = await testingUtils.getApiEndpoint()
     console.log("apiEndpoint: %s", apiEndpoint)
-    client = testingUtils.getAxiosClient(apiEndpoint, process.env["API_KEY"])
+    client = testingUtils.getAxiosClient(apiEndpoint)
   })
 
   beforeEach( async ()=>{
