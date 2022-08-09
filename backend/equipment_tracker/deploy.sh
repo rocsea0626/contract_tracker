@@ -12,6 +12,12 @@ echo "AWS_REGION: $AWS_REGION"
 echo "BUILD_SUFFIX: $BUILD_SUFFIX"
 echo ""
 
+echo "Running unit test ..."
+make start-local-dynamodb
+sleep 10
+npm run test
+make stop-local-dynamodb
+
 echo "List buckets in S3"
 aws s3 ls
 
@@ -40,5 +46,3 @@ echo "TABLE_NAME: ${TABLE_NAME}"
 
 echo "Running integration test..."
 DB_NAME="${TABLE_NAME}" AWS_SAM_STACK_NAME="$STACK_NAME" AWS_REGION="$AWS_REGION" npm run integ-test
-
-

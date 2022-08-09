@@ -12,6 +12,9 @@ echo "AWS_REGION: $AWS_REGION"
 echo "BUILD_SUFFIX: $BUILD_SUFFIX"
 echo ""
 
+echo "Running unit test ..."
+npm test
+
 echo "Build project"
 npm run build
 
