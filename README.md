@@ -40,7 +40,7 @@ And API resources are in `backend/equipment_tracker/api.yaml`
 Frontend app is created by using `npx create-react-app my-app`
 
 ## Quick Start
-### Deploy backend
+- Deploy backend
 Using the `deploy.sh` script to build & deploy backend AWS resources. 
 Everytime when `deploy.sh` is executed, integration test of backend will be executed against freshly deployed backend API.
 ```sh
@@ -49,14 +49,14 @@ npm install
 # Deploy backend & run integration test
 ./deploy.sh
 ```
-### Generate sample data in backend for demo
+- Generate sample data in backend for demo
 By default, 100 items will be randomly generated and uploaded into deployed Dynamodb.
 ```sh
 cd backend/equipment_tracker
 npm run put-items-dynamodb
 ```
 
-### Deploy frontend
+- Deploy frontend
 Using the `deploy.sh` script to build & deploy frontend Reactjs app into AWS S3 bucket. 
 A S3 bucket will bucket will be created and configured to host this web app at the same time.
 
@@ -65,9 +65,14 @@ cd frontend/equipment_tracker
 npm install
 # Create a .env file with content below:
 touch .env
+# Add this env var into .env
 REACT_APP_API_GATEWAY_URL=<output from backend deployment>
 # Deploy frontend
 ./deploy.sh
+```
+- Clean up
+```sh
+aws cloudformation delete-stack --stack-name <output from backend deployment>
 ```
 
 ## Testing
@@ -97,22 +102,6 @@ cd frontend
 npm test
 ```
 There is no integration test for frontend.
-
-## Local Usage
-Run the API & Dynamodb locally.
-```bash
-cd backend/equipment_tracker
-make start-local-dynamodb
-sam local start-api
-make stop-local-dynamodb
-```
-Start dev server locally and add `.env` file
-```sh
-cd frontend/equipment_tracker
-touch .env
-REACT_APP_API_GATEWAY_URL=http://127.0.0.1:3000/
-npm start
-```
 
 ## Design Documentation
 Please refer to `doc/design_doc.md`
