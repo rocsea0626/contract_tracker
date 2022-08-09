@@ -50,7 +50,7 @@ exports.createEquipment = async (equipment) => {
 }
 
 /**
- * Get an equipment from Dynamodb table
+ * Get one equipment from Dynamodb table
  * @param  {string} equipmentNumber
  * @return {Equipment}
  */

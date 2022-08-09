@@ -58,7 +58,7 @@ For example, when unit testing lambda handlers, dependent database operations ar
 - Naming of funcion should be easy to understand so that less documentation is needed
 - Documentation is still needed for functions with complicated logic
 
-###CI/CD
+### CI/CD
 Deployment of project should be simplified and automated as much as possible.
 Unit test and integration test should always be executed in the CI/CD process.
 For both frontend and backend projects, there is `deploy.sh` script to handle this.
@@ -72,10 +72,8 @@ For both frontend and backend projects, there is `deploy.sh` script to handle th
 
 ### Development process
   - Always local development first
-    - Developers should be able to locally test new features/lambdas without deploying to AWS environment.
+    - Developers should be able to test new features/lambdas without deploying to AWS environment on local machine
     - When developers implement Lambda functions, always execute unit test first on local machine.
-  - Local dev + unit test + mock dependencies (AWS services)
-    - so that features can be tested locally before deployment
   - Integration test
     - Using a `deploy.sh` script to deploy entire backend stack. 
     - Once the stack has been deployed, integration test will be executed against newly deployed stack to make sure existing features still work. 
@@ -85,7 +83,7 @@ For both frontend and backend projects, there is `deploy.sh` script to handle th
   - **Cognito** user authentication
   - Support **pagination** of items in API & Lambda
 - Frontend
-    - **pagination** of items returned by API
+    - Support **pagination** of items returned by API
     - Per client **throttling**, **authentication**, etc can be enabled later
     - **E2E test**, by simulating user behaviour on browser
 
