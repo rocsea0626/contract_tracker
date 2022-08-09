@@ -6,7 +6,9 @@ Both backend and frontend source codes are included in this project (Purpose ???
 
 ##Tech stacks
 ### Frontend
-A ReactJs App
+- A ReactJs App, 
+- Redux
+- state management
 ### Backend
 Using SAM `template.yaml` to deploy resources in AWS environment
 Resources to be deployed: 
@@ -14,8 +16,8 @@ Resources to be deployed:
   - AWS Restful API is created. Per client throttling, authentication, etc can be enabled later 
 - Lambda + Roles
   - Using `LAMBDA_PROXY` option for lambda integration, so that payload of requests will forwarded to lambda directly
-- Dynamodb 
-?Cognito, Pipeline
+- Dynamodb
+  - Table design, only Partition key as Primary key based on required access pattern
 
 ## Design principles
 ###single source of truth 
@@ -23,13 +25,19 @@ Resources to be deployed:
 - Using configuration files for deployment and documentation
   - refer to `api.yaml` (Swagger) for API resource definitions so that API doc can be generated
   - models of request and response
+
 ### Modular codes
 - Database logics are implemented in a seperate file so that they can be unit tested independently. 
 - When unit testing lambda handlers, dependent database operations can be mocked
+
+
 ### Testing
 Dynamodb operation functions are tested against real Dynamodb instance locally (reason ???) 
 unit testing should not require internet connection
 integratino test, yes
+To simulate behaviour in CI/CD pipeline, Everytime when `deploy.sh` is executed, integration test of backend will be executed against freshly deployed backend API.
+
+
 ### Development process
   - Developers should be able to locally test new features/lambdas locally first
   - local dev + unit test + mock dependencies (AWS services)
