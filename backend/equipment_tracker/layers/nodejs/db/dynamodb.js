@@ -17,6 +17,21 @@ const getDocumentClient = () => {
     return new AWS.DynamoDB.DocumentClient(getOptions())
 }
 
+/**
+ * @typedef Equipment
+ * @type {object}
+ * @property {string} EquipmentNumber
+ * @property {string} Address
+ * @property {string} StartDate
+ * @property {string} EndDate
+ * @property {string} Status
+ */
+
+/**
+ * Add an equipment into Dynamodb table
+ * @param  {Equipment} equipment
+ * @return {null}
+ */
 exports.createEquipment = async (equipment) => {
     console.log("createEquipment(), equipment: %s", JSON.stringify(equipment))
     const params = {
@@ -34,6 +49,11 @@ exports.createEquipment = async (equipment) => {
     return result
 }
 
+/**
+ * Get an equipment from Dynamodb table
+ * @param  {string} equipmentNumber
+ * @return {Equipment}
+ */
 exports.getEquipmentByNumber = async (equipmentNumber) => {
     console.log("getEquipmentByNumber(), equipmentNumber: %s", equipmentNumber)
     const params = {
@@ -52,7 +72,11 @@ exports.getEquipmentByNumber = async (equipmentNumber) => {
         throw err
     }
 }
-
+/**
+ * Get a list of equipment from Dynamodb table
+ * @param  {number} limit
+ * @return {Equipment[]}
+ */
 exports.getEquipments = async (limit) => {
     const params = {
         TableName : utils.getDynamodbTableName(),
@@ -92,7 +116,9 @@ exports.deleteTable = async () => {
     return result
 }
 
-
+/**
+ * Delete all items in Dynamodb table
+ */
 exports.purgeTable = async () => {
     // console.log("purgeTable()")
     const client = new AWS.DynamoDB.DocumentClient({region: process.env.AWS_REGION})

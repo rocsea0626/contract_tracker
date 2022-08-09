@@ -21,6 +21,10 @@ getRegion = () => {
     return region
 };
 
+/**
+ * Get deployed API endpoint
+ * @param {?string} apiEndpoint
+ */
 getApiEndpoint = async () => {
     const client = new AWS.CloudFormation({region: getRegion()})
     const stackName = getStackName()
@@ -47,7 +51,7 @@ getApiEndpoint = async () => {
     return apiOutput.OutputValue;
 }
 
-getHeaders = (apiKey) => {
+getHeaders = () => {
     return {
         'Content-Type': 'application/json',
         // 'x-api-key': apiKey
