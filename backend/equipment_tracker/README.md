@@ -67,10 +67,9 @@ Backend integration tests are defined in the `contract_tracker/backend/**/tests/
 # Deploy SAM stack
 ./deploy.sh
 export TABLE_NAME = <from-deploy.sh-output>
-export $API_KEY = <from-deploy.sh-output>
 export $STACK_NAME = <from-deploy.sh-output>
 export $AWS_REGION = <from-deploy.sh-output>
-DB_NAME="${TABLE_NAME}" API_KEY="$API_KEY" AWS_SAM_STACK_NAME="$STACK_NAME" AWS_REGION="$AWS_REGION" npm run integ-test
+DB_NAME="${TABLE_NAME}" AWS_SAM_STACK_NAME="$STACK_NAME" AWS_REGION="$AWS_REGION" npm run integ-test
 ```
 
 ## Cleanup
@@ -83,3 +82,5 @@ aws cloudformation delete-stack --stack-name $STACK_NAME
 ## Troubleshooting
 - **Error building docker image**: *pull access denied for public.ecr.aws/sam/xxx, repository does not exist or may require 'docker login': denied: Your authorization token has expired*
   - https://docs.aws.amazon.com/AmazonECR/latest/public/public-troubleshooting.html
+- How do I define the sam template to exclude ApiKeyRequired: true for OPTIONS.
+  - https://github.com/aws/serverless-application-model/issues/1786

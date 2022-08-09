@@ -12,7 +12,7 @@ describe("Test (POST) /equipment", function () {
   before(async () => {
     apiEndpoint = await testingUtils.getApiEndpoint()
     console.log("apiEndpoint: %s", apiEndpoint)
-    client = testingUtils.getAxiosClient(apiEndpoint, process.env["API_KEY"])
+    client = testingUtils.getAxiosClient(apiEndpoint)
   });
 
   beforeEach(async ()=>{

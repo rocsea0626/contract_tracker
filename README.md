@@ -44,7 +44,6 @@ npm install
 # Create a .env file with content below:
 touch .env
 #REACT_APP_API_GATEWAY_URL=<output from backend deployment>
-#REACT_APP_API_KEY=<output from backend deployment>
 # Deploy frontend
 ./deploy.sh
 ```

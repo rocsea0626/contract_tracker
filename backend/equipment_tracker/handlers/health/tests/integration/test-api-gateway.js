@@ -1,8 +1,6 @@
 "use strict";
 
 const chai = require("chai");
-const axios = require("axios");
-const https = require("https");
 const expect = chai.expect;
 const testingUtils = require("../../../../testing-utils/testing-utils")
 
@@ -12,7 +10,7 @@ describe("Test /health", function () {
   before(async () => {
     apiEndpoint = await testingUtils.getApiEndpoint()
     console.log("apiEndpoint: %s", apiEndpoint)
-    client = testingUtils.getAxiosClient(apiEndpoint, process.env["API_KEY"])
+    client = testingUtils.getAxiosClient(apiEndpoint)
   });
 
   it("returns 200, ", async () => {
