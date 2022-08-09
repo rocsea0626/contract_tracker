@@ -1,56 +1,91 @@
-# Kone Assignment design considerations
+# Design considerations
 
 
 ## Folder structure
-Both backend and frontend source codes are included in this project (Purpose ????)
+Both backend and frontend source codes are included in this project so that environment variables can be easily managed and shared across.
+```shell
+├── README.md
+├── backend
+│   └── equipment_tracker
+├── doc
+│   └── design_doc.md
+└── frontend
+    └── equipment_tracker
+```
 
-##Tech stacks
+## Technology
 ### Frontend
-- A ReactJs App, 
-- Redux
-- state management
+- Using `npx create-react-app my-app` to create app templates
+- Using Redux to manage state such as `error`, `loading` in the app
+- Using Redux to facilitate unit testing
+
 ### Backend
 Using SAM `template.yaml` to deploy resources in AWS environment
-Resources to be deployed: 
-- AWS ApiGateway with request validation
-  - AWS Restful API is created. Per client throttling, authentication, etc can be enabled later 
+- AWS _ApiGateway_
+  - AWS Restful API is created.
+  - Request validation
 - Lambda + Roles
-  - Using `LAMBDA_PROXY` option for lambda integration, so that payload of requests will forwarded to lambda directly
+  - Using `LAMBDA_PROXY` option for lambda integration.
 - Dynamodb
-  - Table design, only Partition key as Primary key based on required access pattern
+  - Using _Partition key_ as _Primary key_ based on required access pattern
 
-## Design principles
-###single source of truth 
-- both config and code
-- Using configuration files for deployment and documentation
-  - refer to `api.yaml` (Swagger) for API resource definitions so that API doc can be generated
-  - models of request and response
+## Design consideration
+### API design
+- Each API endpoint has CORS enabled
+- Request validation has been enabled for each endpoint
+
+```shell
+├── /equipment (POST)
+├── /equipment/search?limit={limit} (GET)
+├── /equipment/equipmentNumber (GET)
+├── /health (GET)
+```
+
+
+### Single source of truth 
+- _AWS_ resources should be only defined and configured in _SAM_ template
+- API resource definition should be defined only in `api.yaml` (Swagger)
+- Using configuration file `api.yaml` (Swagger) for both API definition and documentation
+  - Models of request and response are defined in `api.yaml` so that developers/users can easily use
+
 
 ### Modular codes
-- Database logics are implemented in a seperate file so that they can be unit tested independently. 
-- When unit testing lambda handlers, dependent database operations can be mocked
+Business logic(dependencies) such as _Dynamodb_ and _API_ call functions, should be implemented in separate modules so that they can be mocked in the dependent functions. 
+For example, when unit testing lambda handlers, dependent database operations are mocked.
 
+### Single responsibility of functions
+- Each function should do only _one_ task
+- Naming of funcion should be easy to understand so that less documentation is needed
+- Documentation is still needed for functions with complicated logic
+
+###CI/CD
+Deployment of project should be simplified and automated as much as possible.
+Unit test and integration test should always be executed in the CI/CD process.
+For both frontend and backend projects, there is `deploy.sh` script to handle this.
 
 ### Testing
-Dynamodb operation functions are tested against real Dynamodb instance locally (reason ???) 
-unit testing should not require internet connection
-integratino test, yes
-To simulate behaviour in CI/CD pipeline, Everytime when `deploy.sh` is executed, integration test of backend will be executed against freshly deployed backend API.
+- unit test
+  - Unit test should never require internet connection
+- Integration test
+  - For a distributed system, integration test should always test again deployed resources.
 
 
 ### Development process
-  - Developers should be able to locally test new features/lambdas locally first
-  - local dev + unit test + mock dependencies (AWS services)
+  - Always local development first
+    - Developers should be able to locally test new features/lambdas without deploying to AWS environment.
+    - When developers implement Lambda functions, always execute unit test first on local machine.
+  - Local dev + unit test + mock dependencies (AWS services)
     - so that features can be tested locally before deployment
-  - integration test
+  - Integration test
     - Using a `deploy.sh` script to deploy entire backend stack. 
     - Once the stack has been deployed, integration test will be executed against newly deployed stack to make sure existing features still work. 
 
-### Nice to have features
+## Nice to have features
 - Backend
-  - cognito user authentication
-  - support pagination of items in API & Lambda
+  - **Cognito** user authentication
+  - Support **pagination** of items in API & Lambda
 - Frontend
-  - pagination of items returned by API
-  - E2E test, by simulating user behaviour on browser
+    - **pagination** of items returned by API
+    - Per client **throttling**, **authentication**, etc can be enabled later
+    - **E2E test**, by simulating user behaviour on browser
 

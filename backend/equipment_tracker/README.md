@@ -1,21 +1,6 @@
-# Contract Tracker
+# Equipment Tracker
 The application uses several AWS resources, including Lambda functions and an API Gateway API.
 These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
-
-## Develop application locally with DynamoDB local
-- Change dicrecotry to `backend/contract_tracker`
-  - `cd backend/contract_tracker`
-- Run the DynamoDB local in a docker container at port 8000
-  - `docker compose --file docker-compose.yaml up`
-- List the tables on DynamoDB Local by executing
-  - `aws dynamodb list-tables --endpoint-url http://localhost:8000`
-- Create the PersonTable by executing
-  - `aws dynamodb create-table --cli-input-json file://json/create-equipments-table.json --endpoint-url http://localhost:8000`
-- Delete the PersonTable by executing
-  - `aws dynamodb delete-table --table-name EquipmentsTable --endpoint-url http://localhost:8000`
-- Start the local API Gateway instance by executing
-  - `sam local start-api --env-vars json/env.json`
-
 
 ## Pre-requisites
 The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that matches Lambda. It can also emulate your application's build environment and API.

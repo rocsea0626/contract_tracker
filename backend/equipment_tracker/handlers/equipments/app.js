@@ -9,7 +9,7 @@ exports.lambdaHandler = async (event, context) => {
         console.log("event.queryParameters: %s", JSON.stringify(event.queryStringParameters))
         const limit = utils.parseQueryStringLimit(event.queryStringParameters.limit)
         if(!limit || limit < 1){
-            const error = new Error(`invalid request, limit: ${limit}`)
+            const error = new Error(`invalid request, limit: ${event.queryStringParameters.limit}`)
             console.error(error)
             return utils.badRequestResponse(error)
         }
