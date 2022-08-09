@@ -5,10 +5,10 @@ AWS Serverless application to track contracts
 ## Contents
 
 * [Pre-requisite](#pre-requisite)
+* [Project structure](#project-structure)
 * [Quick start](#quick-start)
 * [Local usage](#local-usage)
 * [Testing](#testing)
-* [Folder structure](#folder-structure)
 * [Deployment](#deployment)
 * [Design Documentation](#design-doc)
 
@@ -18,6 +18,26 @@ AWS Serverless application to track contracts
 * Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community)
 * Get access to AWS - [AWS](https://signanthealth.atlassian.net/wiki/spaces/eCOAX/pages/1122961833/AWS+Accounts+Roles+eCOA+X+Environments#How-to-request-access)
 * NPM
+## Project structure
+Both backend and frontend code bases are contained in this repository. 
+Unit tests and integration tests are written in their corresponding folder.
+```
+├── README.md
+├── backend
+│   └── equipment_tracker
+├── doc
+│   └── design_doc.md
+└── frontend
+    └── equipment_tracker
+
+```
+
+### Backend
+AWS resources such as Lambda, Dynamodb table, ApiGateway API are defined in `backend/equipment_tracker/template.yaml`.
+And API resources are in `backend/equipment_tracker/api.yaml`
+
+### Frontend
+Frontend app is created by using `npx create-react-app my-app`
 
 ## Quick Start
 ### Deploy backend
@@ -32,89 +52,67 @@ npm install
 ### Generate sample data in backend for demo
 By default, 100 items will be randomly generated and uploaded into deployed Dynamodb.
 ```sh
+cd backend/equipment_tracker
 npm run put-items-dynamodb
 ```
 
 ### Deploy frontend
-Using the `deploy.sh` script to build & deploy frontend Reactjs app into AWS S3 bucket. S3 bucket has been configured to host this web app.
+Using the `deploy.sh` script to build & deploy frontend Reactjs app into AWS S3 bucket. 
+A S3 bucket will bucket will be created and configured to host this web app at the same time.
 
 ```sh
 cd frontend/equipment_tracker
 npm install
 # Create a .env file with content below:
 touch .env
-#REACT_APP_API_GATEWAY_URL=<output from backend deployment>
+REACT_APP_API_GATEWAY_URL=<output from backend deployment>
 # Deploy frontend
 ./deploy.sh
 ```
 
-## Local Usage
-### Local start backend
-### Local start frontend
-```sh
-cd frontend
-npm start
-```
 ## Testing
 ### Backend
 Both unit tests & integration tests are located at `/backend/hanlders/**/tests/` folder
 
-#### Run unit test for backend
+Run unit test for backend
 
 ```shell
 cd backend
 # Start Dynamodb on local machine
 make start-local-dynamodb
 npm run test 
+make stop-local-dynamodb
 ```
-#### Run integration test for backend
-Before running integration test, please make sure no data is stored in Dynamodb table, otherwise integration test will fail.
+Run integration test for backend. 
+- **NOTICE:** All data items will be deleted before each test case
 ```shell
 cd backend
 # NOTICE: Please purge Dynamodb table before running integration test
 AWS_SAM_STACK_NAME=<stack_name> AWS_REGION=<region> npm run integ-test
 ```
 ### Frontend
-#### Run unit test for frontend
-
+Run unit test for frontend
 ```shell
 cd frontend
 npm test
 ```
+There is no integration test for frontend.
 
-## Folder structure
-### Backend
-AWS resources such as Lambda, Dynamodb table, ApiGateway API are defined in `backend/equipment_tracker/template.yaml`.
-And API resources are in `backend/equipment_tracker/api.yaml`
+## Local Usage
+Run the API & Dynamodb locally.
+```bash
+cd backend/equipment_tracker
+make start-local-dynamodb
+sam local start-api
+make stop-local-dynamodb
 ```
-├── backend
-│   └── equipment_tracker
-│       ├── Makefile
-│       ├── README.md
-│       ├── api.yaml
-│       ├── deploy.sh
-│       ├── docker
-│       ├── events
-│       ├── handlers
-│       ├── json
-│       ├── layers
-│       ├── node_modules
-│       ├── package-lock.json
-│       ├── package.json
-│       ├── packaged.yaml
-│       ├── template.yaml
-│       ├── testing-utils
-│       └── tools
-├── frontend
-│   └── equipment_tracker
-│       ├── README.md
-│       ├── build
-│       ├── deploy.sh
-│       ├── package-lock.json
-│       ├── package.json
-│       ├── public
-│       └── src
+Start dev server locally and add `.env` file
+```sh
+cd frontend/equipment_tracker
+touch .env
+REACT_APP_API_GATEWAY_URL=http://127.0.0.1:3000/
+npm start
+```
 
-```
 ## Design Documentation
 Please refer to `doc/design_doc.md`
